@@ -1,0 +1,13 @@
+name: rmAPIs
+author: rmMinusR
+main: rmMinusR.mc.plugins.apis.RmApisPlugin
+version: 1
+commands:
+ rmapis-debug:
+  usage: /<command> tag <set:list:clear> [key] [value]
+  description: Debugging
+  permission: rmapis.debug
+permissions:
+ rmapis.debug:
+  description: Debugging RMAPIS
+  default: op
