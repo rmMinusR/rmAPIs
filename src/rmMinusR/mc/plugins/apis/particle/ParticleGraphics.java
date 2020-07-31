@@ -131,7 +131,7 @@ public class ParticleGraphics {
 		AdvancedParticleTemplate template = new AdvancedParticleTemplate(Particle.REDSTONE);
 		for(int ix = 0; ix < image.w; ix++) for(int iy = 0; iy < image.h; iy++) {
 			org.bukkit.Color px = image.data[ix][iy];
-			Vector pos = origin.add(right.multiply(ix)).add(up.multiply(-iy));
+			Vector pos = origin.clone().add(right.clone().multiply(ix/(float)image.w)).add(up.clone().multiply(-iy/(float)image.h));
 			template.copy().setColor(px.getRed(), px.getGreen(), px.getBlue()).instantiate(w, pos);
 		}
 	}
