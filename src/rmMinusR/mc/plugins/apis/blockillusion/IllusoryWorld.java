@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.comphenix.packetwrapper.BlockChangeArray;
 import com.comphenix.packetwrapper.WrapperPlayServerBlockChange;
 import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
 import com.comphenix.protocol.PacketType;
@@ -127,11 +126,15 @@ public class IllusoryWorld {
 			for(int i = 0; i < changes.length; i++) {
 				IllusionBlock ib = data.getValue().get(i);
 				//I don't know why. I don't want to know why. I shouldn't
-				//have to wonder why. But for whatever reason MBCI doesn't
-				//convert possibly... WTF?
+				//have to wonder why. But for whatever reason MBCI's coordinates
+				//aren't encoded correctly when using org.bukkit.Location
+				BlockPosition relPos = ib.GetPositionWithinChunk(); //Position relative to chunk
 				MultiBlockChangeInfo info = new MultiBlockChangeInfo(
-						ib.position.toLocation(ib.world),
-						ib.AsWrappedBlockData()
+						//0xXZYY
+						//0bXXZZYYYY
+						(short) ( (relPos.getY() & 0x00FF) | (relPos.getZ() << 8 & 0x0F00) | (relPos.getX() << 12 & 0xF000) ),
+						ib.AsWrappedBlockData(),
+						ib.GetChunk()
 					);
 				changes[i] = info;
 			}
@@ -216,8 +219,8 @@ public class IllusoryWorld {
 		
 		public ChunkCoordIntPair GetChunk() {
 			return new ChunkCoordIntPair(
-						(int) Math.floor(position.getX()),
-						(int) Math.floor(position.getZ())
+						(int) Math.floor(position.getX()/16f),
+						(int) Math.floor(position.getZ()/16f)
 					);
 		}
 		
