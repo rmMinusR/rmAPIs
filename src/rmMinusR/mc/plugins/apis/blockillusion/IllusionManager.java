@@ -161,11 +161,7 @@ public class IllusionManager implements Listener {
 				WrapperPlayServerMultiBlockChange wrapped = new WrapperPlayServerMultiBlockChange(packet);
 				IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
 				
-				System.out.println("Sending packet: Multiblock change on "+wrapped.getRecords().length+" blocks");
-				
 				for(MultiBlockChangeInfo i : wrapped.getRecords()) {
-					
-					System.out.println("["+i.getChunk().getChunkX()+","+i.getChunk().getChunkZ()+"]: "+i.getX()+","+i.getY()+","+i.getZ()+" = "+i.getData());
 					
 					IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), new BlockPosition(i.getAbsoluteX(), i.getY(), i.getAbsoluteZ()));
 					if(ib != null) {

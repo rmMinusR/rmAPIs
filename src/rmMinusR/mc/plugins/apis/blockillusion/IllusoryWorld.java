@@ -6,10 +6,8 @@ import java.util.Map.Entry;
 
 import com.comphenix.packetwrapper.WrapperPlayServerBlockChange;
 import com.comphenix.packetwrapper.WrapperPlayServerMultiBlockChange;
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
@@ -116,8 +114,7 @@ public class IllusoryWorld {
 				Render(b.getValue());
 			}
 		} else if(chunkGrouped.size() == 1) {
-			PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
-			//WrapperPlayServerMultiBlockChange packet = new WrapperPlayServerMultiBlockChange();
+			WrapperPlayServerMultiBlockChange packet = new WrapperPlayServerMultiBlockChange();
 			
 			@SuppressWarnings("unchecked")
 			Entry<ChunkCoordIntPair,ArrayList<IllusionBlock>> data = (Entry<ChunkCoordIntPair,ArrayList<IllusionBlock>>)chunkGrouped.entrySet().toArray()[0];
@@ -130,8 +127,7 @@ public class IllusoryWorld {
 				//aren't encoded correctly when using org.bukkit.Location
 				BlockPosition relPos = ib.GetPositionWithinChunk(); //Position relative to chunk
 				MultiBlockChangeInfo info = new MultiBlockChangeInfo(
-						//0xXZYY
-						//0bXXZZYYYY
+						//Format: 0xX Z YY    0xXXXX ZZZZ YYYYYYYY
 						(short) ( (relPos.getY() & 0x00FF) | (relPos.getZ() << 8 & 0x0F00) | (relPos.getX() << 12 & 0xF000) ),
 						ib.AsWrappedBlockData(),
 						ib.GetChunk()
@@ -139,13 +135,9 @@ public class IllusoryWorld {
 				changes[i] = info;
 			}
 			
-			packet.getChunkCoordIntPairs().write(0, data.getKey());
-			//packet.setChunk(data.getKey());
-			
-			packet.getMultiBlockChangeInfoArrays().write(0, changes);
-			//packet.setRecords(changes);
-			
-			new WrapperPlayServerMultiBlockChange(packet).sendPacket(owner);
+			packet.setChunk(data.getKey());
+			packet.setRecords(changes);
+			packet.sendPacket(owner);
 		} else {
 			//Nothing to render
 		}
