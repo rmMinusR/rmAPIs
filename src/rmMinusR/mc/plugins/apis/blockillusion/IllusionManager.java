@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.blockillusion.IllusoryWorld.ActionPolicy;
 
 public class IllusionManager implements Listener {
 	
@@ -98,11 +99,9 @@ public class IllusionManager implements Listener {
 		IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getBlock().getWorld(), pos);
 		if(ib != null) {
 			
-			if(ib.removeIllusionOnBreak) {
-				iw.ShowReality(ib);
-			} else {
-				event.setCancelled(true);
-			}
+			if(ib.onBreak == ActionPolicy.ShowReality) iw.ShowReality(ib);
+			
+			if(ib.onBreak == ActionPolicy.Cancel) event.setCancelled(true);
 			
 		}
 	}
@@ -118,11 +117,9 @@ public class IllusionManager implements Listener {
 		
 		if(ib != null) {
 			
-			if(ib.removeIllusionOnInteract) {
-				iw.ShowReality(ib);
-			} else {
-				event.setCancelled(true);
-			}
+			if(ib.onInteract == ActionPolicy.ShowReality) iw.ShowReality(ib);
+			
+			if(ib.onInteract == ActionPolicy.Cancel) event.setCancelled(true);
 			
 		}
 	}
@@ -172,4 +169,30 @@ public class IllusionManager implements Listener {
 			}
 		}
 	}
+	/* //TODO implement chunk packet interceptor
+	public class IllusionPacketInterceptorChunk extends PacketAdapter {
+		
+		public IllusionPacketInterceptorChunk() {
+			super(RmApisPlugin.INSTANCE, ListenerPriority.NORMAL, PacketType.Play.Server.CHUNK_DATA);
+		}
+		
+		@Override
+		public void onPacketSending(PacketEvent event) {
+			if(event.getPacketType() == PacketType.Play.Server.MAP_CHUNK) {
+				PacketContainer packet = event.getPacket();
+				WrapperPlayServerMultiBlockChange wrapped = new WrapperPlayServerMultiBlockChange(packet);
+				IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
+				
+				for(MultiBlockChangeInfo i : wrapped.getRecords()) {
+					
+					IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), new BlockPosition(i.getAbsoluteX(), i.getY(), i.getAbsoluteZ()));
+					if(ib != null) {
+						i.setData(ib.AsWrappedBlockData());
+					}
+					
+				}
+			}
+		}
+	}
+	//*/
 }

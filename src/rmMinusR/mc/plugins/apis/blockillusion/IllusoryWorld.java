@@ -34,7 +34,7 @@ public class IllusoryWorld {
 		queue = new ArrayList<IllusionBlock>();
 	}
 	
-	public void QueueIllusionBlock(World w, BlockPosition pos, Material m, int data, IIllusionSource source) {
+	public IllusionBlock QueueIllusionBlock(World w, BlockPosition pos, Material m, int data, IIllusionSource source) {
 		IllusionBlock tgt = GetIllusionBlock(w, pos);
 		
 		if(tgt == null) {
@@ -47,6 +47,8 @@ public class IllusoryWorld {
 			tgt.data = data;
 			tgt.source = source;
 		}
+		
+		return tgt;
 	}
 	
 	@Override
@@ -68,6 +70,12 @@ public class IllusoryWorld {
 	
 	public void Rerender() {
 		Render(shown);
+	}
+	
+	public void Rerender(World w, ChunkCoordIntPair chunk) {
+		HashMap<ChunkCoordIntPair,ArrayList<IllusionBlock>> chunkGrouped = GroupByChunk(shown);
+		
+		if(chunkGrouped.containsKey(chunk)) Render(chunkGrouped.get(chunk));
 	}
 	
 	public void Rerender(World w, BlockPosition pos) {
@@ -179,8 +187,8 @@ public class IllusoryWorld {
 		public int data;
 		
 		public IIllusionSource source;
-		public boolean removeIllusionOnBreak;
-		public boolean removeIllusionOnInteract;
+		public ActionPolicy onBreak;
+		public ActionPolicy onInteract;
 		
 		public IllusionBlock(World world, BlockPosition pos, Material material, int data, IIllusionSource source) {
 			this.world = world;
@@ -189,23 +197,23 @@ public class IllusoryWorld {
 			this.data = data;
 			this.source = source;
 			
-			removeIllusionOnBreak = false;
-			removeIllusionOnInteract = false;
+			onBreak = ActionPolicy.Cancel;
+			onInteract = ActionPolicy.Passthrough;
 		}
 
-		public IllusionBlock SetPossibleRevealAction(boolean _break) {
-			removeIllusionOnBreak = _break;
-			removeIllusionOnInteract = _break;
+		public IllusionBlock SetAllActions(ActionPolicy policy) {
+			onBreak = policy;
+			onInteract = policy;
 			return this;
 		}
 		
-		public IllusionBlock SetBreakAction(boolean _break) {
-			removeIllusionOnBreak = _break;
+		public IllusionBlock SetBreakAction(ActionPolicy policy) {
+			onBreak = policy;
 			return this;
 		}
 		
-		public IllusionBlock SetInteractAction(boolean _break) {
-			removeIllusionOnInteract = _break;
+		public IllusionBlock SetInteractAction(ActionPolicy policy) {
+			onInteract = policy;
 			return this;
 		}
 		
@@ -233,6 +241,10 @@ public class IllusoryWorld {
 		public WrappedBlockData AsWrappedBlockData() {
 			return WrappedBlockData.createData(material, data);
 		}
+	}
+	
+	public static enum ActionPolicy {
+		Cancel, Passthrough, ShowReality
 	}
 	
 	/*

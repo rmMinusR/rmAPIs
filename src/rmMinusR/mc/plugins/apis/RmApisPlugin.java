@@ -19,6 +19,7 @@ import org.bukkit.util.Vector;
 
 import rmMinusR.mc.plugins.apis.blockillusion.IllusionManager;
 import rmMinusR.mc.plugins.apis.blockillusion.IllusoryWorld;
+import rmMinusR.mc.plugins.apis.blockillusion.IllusoryWorld.ActionPolicy;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
 import rmMinusR.mc.plugins.apis.tag.data.Value;
@@ -106,15 +107,9 @@ public class RmApisPlugin extends JavaPlugin {
 			} else {
 				Material m = Material.getMaterial(args[1]);
 				
-				BlockPosition target1 = new BlockPosition(sender.rayTraceBlocks(5).getHitPosition());
-				BlockPosition target2 = new BlockPosition(target1.getX(), target1.getY()+1, target1.getZ());
+				BlockPosition target = new BlockPosition(sender.rayTraceBlocks(5).getHitPosition());
 				
-				iw.QueueIllusionBlock(
-						sender.getWorld(), target1, m, 0, null
-					);
-				iw.QueueIllusionBlock(
-						sender.getWorld(), target2, m, 0, null
-					);
+				iw.QueueIllusionBlock(sender.getWorld(), target, m, 0, null);
 			}
 			
 			return true;
