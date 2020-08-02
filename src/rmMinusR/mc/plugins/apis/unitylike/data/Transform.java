@@ -63,7 +63,18 @@ public final class Transform extends Component {
 	public Quaternion GetRotation() {
 		float w = (float)Math.sqrt(1+matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2]) / 2f;
 		
-		Matrix o = matrix.Reortho();
+		//See https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati/417813
+		//for why this is necessary
+		Vector3 scl_part = GetScale();
+		
+		Matrix rot_part = matrix.Resize(3);
+		for(int i = 0; i < 4; i++) {
+			rot_part.m[0][i] /= scl_part.x;
+			rot_part.m[1][i] /= scl_part.y;
+			rot_part.m[2][i] /= scl_part.z;
+		}
+		
+		Matrix o = rot_part.Resize(4).Reortho();
 		
 		/*
 		 * See http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
@@ -98,6 +109,13 @@ public final class Transform extends Component {
 				);
 	}
 	
-	public Vector3 GetPseudoscale() { return new Vector3(right().GetMagnitude(), up().GetMagnitude(), forward().GetMagnitude()); }
+	public Vector3 GetScale() {
+		//See https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati/417813
+		return new Vector3(
+					new Vector3(matrix.m[0][0], matrix.m[0][1], matrix.m[0][2]).GetMagnitude(),
+					new Vector3(matrix.m[1][0], matrix.m[1][1], matrix.m[1][2]).GetMagnitude(),
+					new Vector3(matrix.m[2][0], matrix.m[2][1], matrix.m[2][2]).GetMagnitude()
+				);
+	}
 	
 }

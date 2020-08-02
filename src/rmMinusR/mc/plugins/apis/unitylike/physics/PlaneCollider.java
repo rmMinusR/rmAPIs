@@ -24,7 +24,7 @@ public class PlaneCollider extends Collider {
 	}
 
 	@Override
-	public boolean IsWithin(Vector3 point) {
+	public boolean IsWithin(Vector3 point) { //Only a point that is on a plane can be considered "in" the plane
 		Matrix toLocal = Matrix.Identity(4);
 		if(gameObject != null && gameObject.GetTransform() != null) toLocal = gameObject.GetTransform().GetWorldToLocalMatrix();
 		
@@ -32,7 +32,7 @@ public class PlaneCollider extends Collider {
 		
 		return -dimensions.x/2+offset.x < local_point.x && local_point.x < dimensions.x/2+offset.x
 			&& -dimensions.y/2+offset.y < local_point.y && local_point.y < dimensions.y/2+offset.y
-			&& local_point.z <= 0;
+			&& local_point.z == 0;
 	}
 
 	@Override
