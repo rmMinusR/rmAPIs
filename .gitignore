@@ -1,3 +1,7 @@
+#rmMinusR: Exclude ./target dir
+target/
+
+#Eclipse
 .metadata
 bin/
 tmp/
