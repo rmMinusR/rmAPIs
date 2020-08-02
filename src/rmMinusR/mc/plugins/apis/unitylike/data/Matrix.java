@@ -50,11 +50,12 @@ public final class Matrix implements Cloneable {
 		return out;
 	}
 	
-	public static Matrix Scale(float scl) {
+	public static Matrix Scale(float x) { return Scale(new Vector3(x, x, x)); }
+	public static Matrix Scale(Vector3 scl) {
 		Matrix out = Identity(4);
-		out.m[0][0] = scl;
-		out.m[1][1] = scl;
-		out.m[2][2] = scl;
+		out.m[0][0] = scl.x;
+		out.m[1][1] = scl.y;
+		out.m[2][2] = scl.z;
 		return out;
 	}
 	

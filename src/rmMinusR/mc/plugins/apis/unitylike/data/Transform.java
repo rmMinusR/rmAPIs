@@ -1,6 +1,7 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 public final class Transform {
 	
@@ -8,6 +9,15 @@ public final class Transform {
 	
 	public Transform() {
 		matrix = Matrix.Identity(4);
+	}
+	
+	public Transform(Vector pos) { this(new Vector3(pos)); }
+	
+	public Transform(Vector3 pos) {
+		matrix = Matrix.Identity(4);
+		matrix.m[3][0] = pos.x;
+		matrix.m[3][1] = pos.y;
+		matrix.m[3][2] = pos.z;
 	}
 	
 	public Transform(Location loc) {
@@ -19,6 +29,21 @@ public final class Transform {
 		matrix = Matrix.Mul(rt_pos, lookYaw, lookPitch);
 	}
 	
+	public Transform(Vector3 pos, Quaternion look) {
+		Matrix m_pos = Matrix.Translate(pos);
+		Matrix m_look = look.ToMatrix();
+		
+		matrix = Matrix.Mul(m_pos, m_look);
+	}
+	
+	public Transform(Vector3 pos, Quaternion look, Vector3 localScale) {
+		Matrix m_pos = Matrix.Translate(pos);
+		Matrix m_look = look.ToMatrix();
+		Matrix m_scl = Matrix.Scale(localScale);
+		
+		matrix = Matrix.Mul(m_pos, m_look, m_scl);
+	}
+	
 	public Matrix GetWorldToLocalMatrix() { return matrix.clone();   }
 	public Matrix GetLocalToWorldMatrix() { return matrix.Inverse(); }
 	
@@ -28,7 +53,7 @@ public final class Transform {
 	
 	public Vector3 GetPosition() { return new Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]); }
 	public void SetPosition(Vector3 pos) { matrix.m[3][0] = pos.x; matrix.m[3][1] = pos.y; matrix.m[3][2] = pos.z; }
-
+	
 	public Quaternion GetRotation() {
 		float w = (float)Math.sqrt(1+matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2]) / 2f;
 		
@@ -55,7 +80,7 @@ public final class Transform {
 				);
 	}
 	
-	public void ZeroRotation() {
+	public void ResetRotation() {
 		matrix.CopyFrom(
 					Matrix.Mul( GetRotation().ToMatrix().Inverse(), matrix )
 				);
@@ -66,5 +91,7 @@ public final class Transform {
 					Matrix.Mul( q.ToMatrix(), GetRotation().Inverse().ToMatrix(), matrix )
 				);
 	}
+	
+	public Vector3 GetPseudoscale() { return new Vector3(right().GetMagnitude(), up().GetMagnitude(), forward().GetMagnitude()); }
 	
 }

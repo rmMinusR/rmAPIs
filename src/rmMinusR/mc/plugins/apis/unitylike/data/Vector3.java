@@ -65,6 +65,8 @@ public class Vector3 implements Cloneable {
 	public Vector3 Mul(float scalar) { return Mul(this, scalar); }
 	public static Vector3 Mul(Vector3 v, float s) { return new Vector3(v.x*s, v.y*s, v.z*s); }
 	
+	public Vector3 Proj(Vector3 other) { return other.WithMagnitude( this.Dot(other)/this.GetMagnitude()/other.GetMagnitude() ); }
+	
 	//Pythagorean
 	public float GetMagnitude() { return (float) Math.sqrt(x*x + y*y + z*z); }
 	public Vector3 WithMagnitude(float m) { return this.Mul(m/GetMagnitude()); }
