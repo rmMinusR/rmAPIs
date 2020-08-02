@@ -32,7 +32,7 @@ public class Vector3 implements Cloneable {
 	
 	//Data IO
 	@Override
-	protected Vector3 clone() {
+	public Vector3 clone() {
 		return new Vector3(x, y, z);
 	}
 	
@@ -71,6 +71,9 @@ public class Vector3 implements Cloneable {
 	public float GetMagnitude() { return (float) Math.sqrt(x*x + y*y + z*z); }
 	public Vector3 WithMagnitude(float m) { return this.Mul(m/GetMagnitude()); }
 	public Vector3 Normalize() { return this.WithMagnitude(1); }
+	
+	public float Distance(Vector3 other) { return Distance(this, other); }
+	public static float Distance(Vector3 a, Vector3 b) { return Sub(a, b).GetMagnitude(); }
 	
 	//Trigonometry
 	public float Angle(Vector3 other) { return Angle(this, other); }

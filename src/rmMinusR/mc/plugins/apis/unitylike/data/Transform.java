@@ -3,24 +3,35 @@ package rmMinusR.mc.plugins.apis.unitylike.data;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public final class Transform {
+import rmMinusR.mc.plugins.apis.unitylike.core.Component;
+import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
+
+public final class Transform extends Component {
 	
 	public Matrix matrix;
 	
-	public Transform() {
+	public Transform() { this((GameObject)null); }
+	public Transform(GameObject gameObject) {
+		super(gameObject);
 		matrix = Matrix.Identity(4);
 	}
 	
-	public Transform(Vector pos) { this(new Vector3(pos)); }
+	public Transform(Vector pos) { this((GameObject)null, pos); }
+	public Transform(GameObject gameObject, Vector pos) { this(new Vector3(pos)); }
 	
-	public Transform(Vector3 pos) {
+	public Transform(Vector3 pos) { this((GameObject)null, pos); }
+	public Transform(GameObject gameObject, Vector3 pos) {
+		super(gameObject);
 		matrix = Matrix.Identity(4);
 		matrix.m[3][0] = pos.x;
 		matrix.m[3][1] = pos.y;
 		matrix.m[3][2] = pos.z;
 	}
 	
-	public Transform(Location loc) {
+	public Transform(Location loc) { this((GameObject)null, loc); }
+	public Transform(GameObject gameObject, Location loc) {
+		super(gameObject);
+		
 		Matrix rt_pos = Matrix.Translate(new Vector3(loc.toVector()));
 		
 		Matrix lookYaw   = Matrix.RotateY((float)Math.toRadians( loc.getYaw  () ));
@@ -29,19 +40,14 @@ public final class Transform {
 		matrix = Matrix.Mul(rt_pos, lookYaw, lookPitch);
 	}
 	
-	public Transform(Vector3 pos, Quaternion look) {
+	public Transform(Vector3 pos, Quaternion look) { this((GameObject)null, pos, look); }
+	public Transform(GameObject gameObject, Vector3 pos, Quaternion look) { 
+		super(gameObject);
+		
 		Matrix m_pos = Matrix.Translate(pos);
 		Matrix m_look = look.ToMatrix();
 		
 		matrix = Matrix.Mul(m_pos, m_look);
-	}
-	
-	public Transform(Vector3 pos, Quaternion look, Vector3 localScale) {
-		Matrix m_pos = Matrix.Translate(pos);
-		Matrix m_look = look.ToMatrix();
-		Matrix m_scl = Matrix.Scale(localScale);
-		
-		matrix = Matrix.Mul(m_pos, m_look, m_scl);
 	}
 	
 	public Matrix GetWorldToLocalMatrix() { return matrix.clone();   }

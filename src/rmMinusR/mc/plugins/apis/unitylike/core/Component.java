@@ -1,6 +1,6 @@
 package rmMinusR.mc.plugins.apis.unitylike.core;
 
-public abstract class Component {
+public abstract class Component extends UnitylikeObject {
 	
 	public GameObject gameObject;
 	

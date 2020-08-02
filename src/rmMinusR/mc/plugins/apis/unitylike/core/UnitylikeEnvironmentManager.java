@@ -50,6 +50,27 @@ public final class UnitylikeEnvironmentManager implements Runnable {
 		}
 	}
 	
+	public UnitylikeObject FindObjectOfType(Class<? extends UnitylikeObject> clazz) {
+		for(GameObject go : gameObjects) {
+			if(clazz.isAssignableFrom(go.getClass())) return go;
+			for(Component c : go.GetComponents(Component.class)) if(clazz.isAssignableFrom(c.getClass())) return c;
+		}
+		return null;
+	}
+	
+	public UnitylikeObject[] FindObjectsOfType(Class<? extends UnitylikeObject> clazz) {
+		ArrayList<UnitylikeObject> matches = new ArrayList<UnitylikeObject>();
+		
+		for(GameObject go : gameObjects) {
+			if(clazz.isAssignableFrom(go.getClass())) matches.add(go);
+			for(Component c : go.GetComponents(Component.class)) if(clazz.isAssignableFrom(c.getClass())) matches.add(c);
+		}
+		
+		UnitylikeObject[] tmp = null;
+		matches.toArray(tmp);
+		return tmp;
+	}
+	
 	@Override
 	public void run() {
 		

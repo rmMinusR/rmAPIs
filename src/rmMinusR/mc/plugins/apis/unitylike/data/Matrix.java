@@ -1,5 +1,7 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
+import rmMinusR.mc.plugins.apis.unitylike.physics.Ray;
+
 /**
  * SQUARE matrix.
  */
@@ -143,6 +145,10 @@ public final class Matrix implements Cloneable {
 				m[0][1]*vector.x + m[1][1]*vector.y + m[2][1]*vector.z,
 				m[0][2]*vector.x + m[1][2]*vector.y + m[2][2]*vector.z
 			);
+	}
+	
+	public Ray TransformRay(Ray ray) {
+		return new Ray(TransformPoint(ray.origin), TransformVector(ray.direction));
 	}
 	
 	//Matrix maths: Basic

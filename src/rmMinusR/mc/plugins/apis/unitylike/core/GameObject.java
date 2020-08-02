@@ -3,8 +3,9 @@ package rmMinusR.mc.plugins.apis.unitylike.core;
 import java.util.ArrayList;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 
-public class GameObject {
+public class GameObject extends UnitylikeObject {
 	
 	private ArrayList<Component> components;
 	
@@ -21,6 +22,10 @@ public class GameObject {
 		RmApisPlugin.INSTANCE.unitylikeEnv.Instantiate(o);
 	}
 	
+	public Transform GetTransform() {
+		return (Transform) GetComponent(Transform.class);
+	}
+	
 	public void AddComponent(Component c) {
 		if(components.contains(c)) throw new IllegalArgumentException("Already added this component!");
 		
@@ -33,13 +38,12 @@ public class GameObject {
 		components.removeAll(matches);
 	}
 	
-	public <T extends Component> T GetComponent() {
+	public Component GetComponent(Class<? extends Component> clazz) {
 		for(Component c : components) {
-			try {
-				@SuppressWarnings("unchecked")
-				T out = (T)c;
-				return out;
-			} catch(ClassCastException e) {}
+			//Class comparison
+			if(clazz.isAssignableFrom(c.getClass())) {
+				return c;
+			}
 		}
 		
 		return null;
@@ -52,16 +56,6 @@ public class GameObject {
 			//Class comparison
 			if(clazz.isAssignableFrom(c.getClass())) {
 				matches.add(c);
-			} else {
-				//Interface comparison
-				boolean breakLoop = false;
-				Class<?>[] vals = clazz.getInterfaces();
-				for(int i = 0; i < vals.length || breakLoop; i++) {
-					if(clazz.isAssignableFrom(vals[i])) {
-						matches.add(c);
-						breakLoop = true;
-					}
-				}
 			}
 		}
 		
