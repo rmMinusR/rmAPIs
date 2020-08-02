@@ -75,6 +75,7 @@ public class Vector3 implements Cloneable {
 	//Trigonometry
 	public float Angle(Vector3 other) { return Angle(this, other); }
 	public static float Angle(Vector3 a, Vector3 b) { return (float) Math.acos(a.Dot(b)/a.GetMagnitude()/b.GetMagnitude()); }
+	
 	//a dot b = |a|*|b| * cos(ang)
 	//(a dot b) / (|a|*|b|) = cos(ang)
 	//ang = acos( (a dot b) / (|a|*|b|)

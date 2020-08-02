@@ -1,6 +1,7 @@
 package rmMinusR.mc.plugins.apis;
 
 import java.util.logging.Logger;
+
 import com.comphenix.protocol.wrappers.BlockPosition;
 
 import org.bukkit.Bukkit;
@@ -17,7 +18,6 @@ import rmMinusR.mc.plugins.apis.illusion.block.IllusoryWorld;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
 import rmMinusR.mc.plugins.apis.unitylike.GameObjectManager;
-import rmMinusR.mc.plugins.apis.unitylike.TestGameObject;
 
 public class RmApisPlugin extends JavaPlugin {
 	
@@ -105,12 +105,6 @@ public class RmApisPlugin extends JavaPlugin {
 				
 				iw.QueueIllusionBlock(sender.getWorld(), target, m, 0, null);
 			}
-			
-			return true;
-		}
-		
-		if(args[0].equalsIgnoreCase("un")) {
-			new TestGameObject(sender).Instantate();
 			
 			return true;
 		}
