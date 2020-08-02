@@ -1,8 +1,12 @@
-package rmMinusR.mc.plugins.apis.unitylike;
+package rmMinusR.mc.plugins.apis.unitylike.core;
 
 import org.bukkit.event.inventory.ClickType;
 
-public abstract class BehaviourComponent {
+public abstract class JavaBehaviour extends Component {
+	
+	public JavaBehaviour(GameObject gameObject) {
+		super(gameObject);
+	}
 	
 	//SINGLE-CALL PATTERN: Awake()
 	private boolean _calledAwake = false;

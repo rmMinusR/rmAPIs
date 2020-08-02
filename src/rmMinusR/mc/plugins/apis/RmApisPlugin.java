@@ -14,16 +14,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import rmMinusR.mc.plugins.apis.illusion.block.IllusionManager;
-import rmMinusR.mc.plugins.apis.illusion.block.IllusoryWorld;
+import rmMinusR.mc.plugins.apis.illusion.block.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
-import rmMinusR.mc.plugins.apis.unitylike.GameObjectManager;
+import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
 
 public class RmApisPlugin extends JavaPlugin {
 	
 	public Logger logger;
 	public IllusionManager illusionManager;
-	public GameObjectManager unitylikeGOM;
+	public UnitylikeEnvironmentManager unitylikeEnv;
 	
 	public static RmApisPlugin INSTANCE;
 	
@@ -43,8 +43,8 @@ public class RmApisPlugin extends JavaPlugin {
 		
 		try {
 			logger.info("Initializing Unitylike");
-			unitylikeGOM = new GameObjectManager();
-			unitylikeGOM.OnEnable();
+			unitylikeEnv = new UnitylikeEnvironmentManager();
+			unitylikeEnv.OnEnable();
 		} catch(Throwable t) { t.printStackTrace(); }
 	}
 	
@@ -59,10 +59,10 @@ public class RmApisPlugin extends JavaPlugin {
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
-			if(unitylikeGOM != null) {
+			if(unitylikeEnv != null) {
 				logger.info("Disabling Unitylike");
-				unitylikeGOM.OnDisable();
-				unitylikeGOM = null;
+				unitylikeEnv.OnDisable();
+				unitylikeEnv = null;
 			}
 		} catch(Throwable t) { t.printStackTrace(); }
 		
@@ -91,7 +91,7 @@ public class RmApisPlugin extends JavaPlugin {
 		}
 		
 		if(args[0].equalsIgnoreCase("ill")) {
-			IllusoryWorld iw = illusionManager.GetIllusoryWorld(sender);
+			IllusoryOverlay iw = illusionManager.GetIllusoryWorld(sender);
 			if(args[1].equalsIgnoreCase("rst")) {
 				iw.ShowReality();
 			} else if(args[1].equalsIgnoreCase("disp")) {

@@ -24,17 +24,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
-import rmMinusR.mc.plugins.apis.illusion.block.IllusoryWorld.ActionPolicy;
+import rmMinusR.mc.plugins.apis.illusion.block.IllusoryOverlay.ActionPolicy;
 
 public class IllusionManager implements Listener {
 	
-	public HashMap<UUID,IllusoryWorld> illusions;
+	public HashMap<UUID,IllusoryOverlay> illusions;
 	
 	public IllusionPacketInterceptorSingle interceptorSingle;
 	public IllusionPacketInterceptorMulti interceptorMulti;
 	
 	public IllusionManager() {
-		illusions = new HashMap<UUID, IllusoryWorld>();
+		illusions = new HashMap<UUID, IllusoryOverlay>();
 		interceptorSingle = new IllusionPacketInterceptorSingle();
 		interceptorMulti = new IllusionPacketInterceptorMulti();
 	}
@@ -61,8 +61,8 @@ public class IllusionManager implements Listener {
 		Bukkit.getScheduler().cancelTask(tickerTaskID);
 	}
 	
-	public IllusoryWorld GetIllusoryWorld(Player player) {
-		if(!illusions.containsKey(player.getUniqueId())) illusions.put(player.getUniqueId(), new IllusoryWorld(player));
+	public IllusoryOverlay GetIllusoryWorld(Player player) {
+		if(!illusions.containsKey(player.getUniqueId())) illusions.put(player.getUniqueId(), new IllusoryOverlay(player));
 		
 		return illusions.get(player.getUniqueId());
 	}
@@ -94,9 +94,9 @@ public class IllusionManager implements Listener {
 	@EventHandler
 	public void OnPlayerBreak(BlockBreakEvent event) {
 		BlockPosition pos = new BlockPosition(event.getBlock().getLocation().toVector());
-		IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
+		IllusoryOverlay iw = GetIllusoryWorld(event.getPlayer());
 		
-		IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getBlock().getWorld(), pos);
+		IllusoryOverlay.IllusionBlock ib = iw.GetIllusionBlock(event.getBlock().getWorld(), pos);
 		if(ib != null) {
 			
 			if(ib.onBreak == ActionPolicy.ShowReality) iw.ShowReality(ib);
@@ -111,9 +111,9 @@ public class IllusionManager implements Listener {
 		if(event.getClickedBlock() == null) return;
 		
 		BlockPosition pos = new BlockPosition(event.getClickedBlock().getLocation().toVector());
-		IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
+		IllusoryOverlay iw = GetIllusoryWorld(event.getPlayer());
 		
-		IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getClickedBlock().getWorld(), pos);
+		IllusoryOverlay.IllusionBlock ib = iw.GetIllusionBlock(event.getClickedBlock().getWorld(), pos);
 		
 		if(ib != null) {
 			
@@ -135,9 +135,9 @@ public class IllusionManager implements Listener {
 			if(event.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) {
 				PacketContainer packet = event.getPacket();
 				WrapperPlayServerBlockChange wrapped = new WrapperPlayServerBlockChange(packet);
-				IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
+				IllusoryOverlay iw = GetIllusoryWorld(event.getPlayer());
 				
-				IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), wrapped.getLocation());
+				IllusoryOverlay.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), wrapped.getLocation());
 				if(ib != null) {
 					wrapped.setBlockData(ib.AsWrappedBlockData());
 				}
@@ -156,11 +156,11 @@ public class IllusionManager implements Listener {
 			if(event.getPacketType() == PacketType.Play.Server.MULTI_BLOCK_CHANGE) {
 				PacketContainer packet = event.getPacket();
 				WrapperPlayServerMultiBlockChange wrapped = new WrapperPlayServerMultiBlockChange(packet);
-				IllusoryWorld iw = GetIllusoryWorld(event.getPlayer());
+				IllusoryOverlay iw = GetIllusoryWorld(event.getPlayer());
 				
 				for(MultiBlockChangeInfo i : wrapped.getRecords()) {
 					
-					IllusoryWorld.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), new BlockPosition(i.getAbsoluteX(), i.getY(), i.getAbsoluteZ()));
+					IllusoryOverlay.IllusionBlock ib = iw.GetIllusionBlock(event.getPlayer().getWorld(), new BlockPosition(i.getAbsoluteX(), i.getY(), i.getAbsoluteZ()));
 					if(ib != null) {
 						i.setData(ib.AsWrappedBlockData());
 					}

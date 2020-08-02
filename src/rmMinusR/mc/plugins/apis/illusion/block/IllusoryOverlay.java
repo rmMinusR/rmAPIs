@@ -17,7 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class IllusoryWorld {
+public class IllusoryOverlay {
 	public static ProtocolManager protocolManager;
 	
 	public final Player owner;
@@ -26,7 +26,7 @@ public class IllusoryWorld {
 	
 	private ArrayList<IllusionBlock> queue;
 	
-	public IllusoryWorld(Player owner) {
+	public IllusoryOverlay(Player owner) {
 		if(protocolManager == null) protocolManager = ProtocolLibrary.getProtocolManager();
 		
 		this.owner = owner;
