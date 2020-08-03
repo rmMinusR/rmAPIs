@@ -32,10 +32,13 @@ public class GameObject extends UnitylikeObject {
 		GetTransform().matrix.CopyDataFrom(t.matrix);
 	}
 	
-	public void AddComponent(Component c) {
+	public final void AddComponent(Component c) { AddComponent(c, true); }
+	public void AddComponent(Component c, boolean doAwake) {
 		if(components.contains(c)) throw new IllegalArgumentException("Already added this component!");
-		
 		components.add(c);
+		
+		if(doAwake && c instanceof JavaBehaviour) ((JavaBehaviour)c)._Awake();
+		if(c instanceof JavaBehaviour) ((JavaBehaviour)c)._SetEnabled(true);
 	}
 	
 	public void RemoveComponent(Class<? extends Component> rem) {
@@ -66,5 +69,12 @@ public class GameObject extends UnitylikeObject {
 		}
 		
 		return matches;
+	}
+	
+	public Component[] GetComponents() {
+		Component[] out = new Component[components.size()+1];
+		components.toArray(out);
+		out[out.length-1] = GetTransform();
+		return out;
 	}
 }

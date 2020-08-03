@@ -45,7 +45,7 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	
 	public WrappedEntity Wrap(Entity who) {
 		//Try to fetch existing wrapper
-		for(GameObject go : gameObjects) if(go instanceof WrappedEntity && ((WrappedEntity)go).entity == who) return (WrappedEntity)go;
+		for(GameObject go : gameObjects) if(go instanceof WrappedEntity && ((WrappedEntity)go).entity.getUniqueId().equals(who.getUniqueId()) ) return (WrappedEntity)go;
 		
 		//Assume not wrapped yet, construct new wrapper
 		WrappedEntity out = null;
@@ -54,11 +54,13 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 		else if(who instanceof LivingEntity) out = new WrappedLivingEntity((LivingEntity)who);
 		else                                 out = new WrappedEntity      (              who);
 		
+		gameObjects.add(out);
+		
 		return out;
 	}
 	
 	public boolean HasWrapped(Entity who) {
-		for(GameObject go : gameObjects) if(go instanceof WrappedEntity && ((WrappedEntity)go).entity == who) return true;
+		for(GameObject go : gameObjects) if(go instanceof WrappedEntity && ((WrappedEntity)go).entity.getUniqueId().equals(who.getUniqueId())) return true;
 		return false;
 	}
 	
@@ -74,7 +76,7 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	
 	@EventHandler
 	public void OnEntityDeath(EntityDeathEvent event) {
-		if(HasWrapped(event.getEntity())) Destroy(Wrap(event.getEntity()));
+		if(!(event.getEntity() instanceof Player) && HasWrapped(event.getEntity())) Destroy(Wrap(event.getEntity()));
 	}
 	
 	public void Instantiate(GameObject go) {
@@ -92,19 +94,9 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	public void Destroy(GameObject go) {
 		if(!gameObjects.contains(go)) return;
 		
-		gameObjects.remove(go);
-		
 		try {
-			if(go instanceof WrappedPlayer) {
-				WrappedPlayer w = (WrappedPlayer)go;
-				w.SavePersistent();
-			} else {
-				for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c)._SetEnabled(false);
-				for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c).OnDestroy();
-			}
-		} catch(IOException e) {
-			RmApisPlugin.INSTANCE.logger.warning("Failed to save Unitylike data for player "+((WrappedPlayer)go).player.getDisplayName());
-			e.printStackTrace();
+			for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c)._SetEnabled(false);
+			for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c).OnDestroy();
 		} finally {
 			gameObjects.remove(go);
 		}

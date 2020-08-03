@@ -20,10 +20,10 @@ public class WrappedEntity extends GameObject {
 	public void SetTransform(Transform t) { t.WriteTo(entity.getLocation()); }
 	
 	@Override
-	public void AddComponent(Component c) {
+	public void AddComponent(Component c, boolean doAwake) {
 		//Only allow non-Transform components
 		if(Transform.class.isAssignableFrom(c.getClass())) throw new IllegalArgumentException("Cannot add a Transform to WrappedEntity");
-		super.AddComponent(c);
+		super.AddComponent(c, doAwake);
 	}
 	
 	@Override
@@ -37,6 +37,7 @@ public class WrappedEntity extends GameObject {
 		if(clazz.isAssignableFrom(Transform.class)) {
 			ArrayList<Component> out = new ArrayList<Component>();
 			out.add(GetTransform());
+			out.addAll(super.GetComponents(clazz));
 			return out;
 		}
 		return super.GetComponents(clazz);

@@ -28,7 +28,11 @@ public abstract class JavaBehaviour extends Component {
 		if(enable != this.enabled) {
 			this.enabled = enable;
 			
-			if(enable) OnEnable(); else OnDisable();
+			if(enable) {
+				OnEnable();
+			} else {
+				OnDisable();
+			}
 		}
 	}
 	

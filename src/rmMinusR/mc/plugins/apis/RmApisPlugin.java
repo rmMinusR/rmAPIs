@@ -18,6 +18,7 @@ import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusionManager;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay;
+import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
 
 public class RmApisPlugin extends JavaPlugin {
@@ -125,6 +126,10 @@ public class RmApisPlugin extends JavaPlugin {
 			return true;
 		}
 		
+		if(args[0].equalsIgnoreCase("unitylike-list")) {
+			for(Component i : unitylikeEnv.Wrap(sender).GetComponents()) System.out.println(i);
+			return true;
+		}
 		//END TESTING
 		
 		return false;
