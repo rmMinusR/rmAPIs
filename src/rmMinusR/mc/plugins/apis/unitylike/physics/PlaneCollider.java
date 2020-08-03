@@ -53,7 +53,7 @@ public class PlaneCollider extends Collider {
 	}
 
 	@Override
-	public RaycastHit GetCollision(Ray ray) {
+	public RaycastHit GetCollision(Line ray) {
 		// TODO Auto-generated method stub
 		return null;
 	}

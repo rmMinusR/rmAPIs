@@ -1,4 +1,4 @@
-package rmMinusR.mc.plugins.apis.illusion.block;
+package rmMinusR.mc.plugins.apis.simpleillusion;
 
 import java.util.ArrayList;
 import java.util.HashMap;

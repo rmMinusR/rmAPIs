@@ -13,10 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import rmMinusR.mc.plugins.apis.illusion.block.IllusionManager;
-import rmMinusR.mc.plugins.apis.illusion.block.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
+import rmMinusR.mc.plugins.apis.simpleillusion.IllusionManager;
+import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
 
 public class RmApisPlugin extends JavaPlugin {

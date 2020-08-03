@@ -12,6 +12,6 @@ public abstract class Collider extends Component {
 	
 	public abstract boolean IsWithin(Vector3 point);
 	public abstract Vector3 GetClosestPoint(Vector3 global_point);
-	public abstract RaycastHit GetCollision(Ray ray);
+	public abstract RaycastHit GetCollision(Line ray);
 	
 }

@@ -1,8 +1,9 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class Vector3 implements Cloneable {
+public final class Vector3 implements Cloneable {
 	
 	//Fields
 	public float x, y, z;
@@ -20,6 +21,8 @@ public class Vector3 implements Cloneable {
 	public static Vector3    back() { return new Vector3( 0,  0, -1); }
 	
 	//Ctors
+	public Vector3(Location loc) { this(loc.getX(), loc.getY(), loc.getZ()); }
+	
 	public Vector3(Vector v) { this(v.getX(), v.getY(), v.getZ()); }
 	
 	public Vector3(double x2, double y2, double z2) { this((float)x2, (float)y2, (float)z2); }
@@ -36,8 +39,12 @@ public class Vector3 implements Cloneable {
 		return new Vector3(x, y, z);
 	}
 	
-	public Vector toBukkit() {
+	public Vector ToBukkit() {
 		return new Vector(x, y, z);
+	}
+	
+	public BlockVector3 ToBlockVector3() {
+		return new BlockVector3(this);
 	}
 	
 	@Override

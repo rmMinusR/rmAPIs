@@ -23,7 +23,13 @@ public class GameObject extends UnitylikeObject {
 	}
 	
 	public Transform GetTransform() {
-		return (Transform) GetComponent(Transform.class);
+		Transform out = (Transform) GetComponent(Transform.class);
+		return out != null ? out : new Transform();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void SetTransform(Transform t) {
+		GetTransform().matrix.CopyDataFrom(t.matrix);
 	}
 	
 	public void AddComponent(Component c) {

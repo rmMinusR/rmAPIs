@@ -20,7 +20,7 @@ public final class Physics {
 	public static boolean Raycast(Vector3 origin, Vector3 direction, float maxDistance)						{ return Raycast(origin, direction,     maxDistance, selectAny); }
 	public static boolean Raycast(Vector3 origin, Vector3 direction, Function<Collider, Boolean> selector)	{ return Raycast(origin, direction, Float.MAX_VALUE, selector ); }
 	public static boolean Raycast(Vector3 origin, Vector3 direction, float maxDistance, Function<Collider, Boolean> selector) {
-		Ray ray = new Ray(origin, direction);
+		Line ray = new Line(origin, direction);
 		
 		for(UnitylikeObject o : RmApisPlugin.INSTANCE.unitylikeEnv.FindObjectsOfType(Collider.class)) {
 			Collider c = (Collider)o;
@@ -39,7 +39,7 @@ public final class Physics {
 	public static RaycastHit[] RaycastAll(Vector3 origin, Vector3 direction, Function<Collider, Boolean> selector)	{ return RaycastAll(origin, direction, Float.MAX_VALUE, selector ); }
 	public static RaycastHit[] RaycastAll(Vector3 origin, Vector3 direction, float maxDistance, Function<Collider, Boolean> selector) {
 		ArrayList<RaycastHit> hits = new ArrayList<RaycastHit>();
-		Ray ray = new Ray(origin, direction);
+		Line ray = new Line(origin, direction);
 		
 		for(UnitylikeObject o : RmApisPlugin.INSTANCE.unitylikeEnv.FindObjectsOfType(Collider.class)) {
 			Collider c = (Collider)o;

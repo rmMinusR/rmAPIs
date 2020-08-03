@@ -53,6 +53,14 @@ public final class Transform extends Component {
 	public Matrix GetWorldToLocalMatrix() { return matrix.clone();   }
 	public Matrix GetLocalToWorldMatrix() { return matrix.Inverse(); }
 	
+	public void WriteTo(Location loc) {
+		Vector3 pos = GetPosition();
+		loc.setX(pos.x); loc.setY(pos.y); loc.setZ(pos.z);
+		
+		//Quaternion rot = GetRotation();
+		loc.setDirection(forward().ToBukkit());
+	}
+	
 	public Vector3   right() { return matrix.TransformVector(Vector3.  right()); }
 	public Vector3      up() { return matrix.TransformVector(Vector3.     up()); }
 	public Vector3 forward() { return matrix.TransformVector(Vector3.forward()); }
@@ -97,14 +105,16 @@ public final class Transform extends Component {
 				);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void ResetRotation() {
-		matrix.CopyFrom(
+		matrix.CopyDataFrom(
 					Matrix.Mul( GetRotation().ToMatrix().Inverse(), matrix )
 				);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void SetRotation(Quaternion q) {
-		matrix.CopyFrom(
+		matrix.CopyDataFrom(
 					Matrix.Mul( q.ToMatrix(), GetRotation().Inverse().ToMatrix(), matrix )
 				);
 	}

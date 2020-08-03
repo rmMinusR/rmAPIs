@@ -1,6 +1,6 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
-import rmMinusR.mc.plugins.apis.unitylike.physics.Ray;
+import rmMinusR.mc.plugins.apis.unitylike.physics.Line;
 
 /**
  * SQUARE matrix.
@@ -116,10 +116,11 @@ public final class Matrix implements Cloneable {
 		return out;
 	}
 	
-	/**
+	/*
 	 * Should almost never be called!
 	 */
-	protected void CopyFrom(Matrix other) {
+	@Deprecated
+	public void CopyDataFrom(Matrix other) {
 		for(int i = 0; i < size; i++) for(int j = 0; j < size; j++) m[i][j] = other.m[i][j];
 	}
 	
@@ -147,8 +148,8 @@ public final class Matrix implements Cloneable {
 			);
 	}
 	
-	public Ray TransformRay(Ray ray) {
-		return new Ray(TransformPoint(ray.origin), TransformVector(ray.direction));
+	public Line TransformRay(Line ray) {
+		return new Line(TransformPoint(ray.origin), TransformVector(ray.direction));
 	}
 	
 	//Matrix maths: Basic

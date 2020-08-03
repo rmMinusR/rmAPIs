@@ -1,4 +1,4 @@
-package rmMinusR.mc.plugins.apis.illusion.block;
+package rmMinusR.mc.plugins.apis.simpleillusion;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -17,6 +17,7 @@ import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,7 +25,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
-import rmMinusR.mc.plugins.apis.illusion.block.IllusoryOverlay.ActionPolicy;
+import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay.ActionPolicy;
 
 public class IllusionManager implements Listener {
 	
@@ -59,6 +60,7 @@ public class IllusionManager implements Listener {
 		interceptorMulti = null;
 		
 		Bukkit.getScheduler().cancelTask(tickerTaskID);
+		HandlerList.unregisterAll(this);
 	}
 	
 	public IllusoryOverlay GetIllusoryWorld(Player player) {
