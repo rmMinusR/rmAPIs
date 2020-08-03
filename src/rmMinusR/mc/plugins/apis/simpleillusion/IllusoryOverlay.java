@@ -13,9 +13,13 @@ import com.comphenix.protocol.wrappers.ChunkCoordIntPair;
 import com.comphenix.protocol.wrappers.MultiBlockChangeInfo;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import rmMinusR.mc.plugins.apis.RmApisPlugin;
 
 public class IllusoryOverlay {
 	public static ProtocolManager protocolManager;
@@ -63,26 +67,27 @@ public class IllusoryOverlay {
 	
 	public void RenderQueue() {
 		queue.removeAll(shown);
-		Render(queue);
+		SendSafe(queue);
 		shown.addAll(queue);
 		queue.clear();
 	}
 	
 	public void Rerender() {
-		Render(shown);
+		SendSafe(shown);
 	}
 	
+	public void Rerender(World world, Chunk chunk) { Rerender(world, new ChunkCoordIntPair(chunk.getX(), chunk.getZ())); }
 	public void Rerender(World w, ChunkCoordIntPair chunk) {
 		HashMap<ChunkCoordIntPair,ArrayList<IllusionBlock>> chunkGrouped = GroupByChunk(shown);
 		
-		if(chunkGrouped.containsKey(chunk)) Render(chunkGrouped.get(chunk));
+		if(chunkGrouped.containsKey(chunk)) SendSafe(chunkGrouped.get(chunk));
 	}
 	
 	public void Rerender(World w, BlockPosition pos) {
 		IllusionBlock tgt = GetIllusionBlock(w, pos);
 		if(tgt == null) return;
 		
-		Render(tgt);
+		SendSafe(tgt);
 	}
 
 	public IllusionBlock GetIllusionBlock(World w, BlockPosition pos) {
@@ -107,19 +112,48 @@ public class IllusoryOverlay {
 		shown.remove(tgt);
 		queue.remove(tgt);
 		
-		Render(tgt.GetReality());
+		SendSafe(tgt.GetReality());
 	}
 	
-	private void Render(ArrayList<IllusionBlock> tgt) {
+	private void SendSafe(ArrayList<IllusionBlock> tgt) {
+		ArrayList<IllusionBlock> tmp = new ArrayList<IllusionBlock>(tgt);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RmApisPlugin.INSTANCE, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					SendImmediate(tmp);
+				} catch(Throwable t) {
+					RmApisPlugin.INSTANCE.logger.warning("An error occurred while sending multiblock illusion:");
+					t.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void SendSafe(IllusionBlock tgt) {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(RmApisPlugin.INSTANCE, new Runnable() {
+			@Override
+			public void run() {
+				try {
+					SendImmediate(tgt);
+				} catch(Throwable t) {
+					RmApisPlugin.INSTANCE.logger.warning("An error occurred while sending single-block illusion:");
+					t.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void SendImmediate(ArrayList<IllusionBlock> tgt) {
 		if(tgt == null || tgt.size() == 0) return;
-		if(tgt.size() == 1) Render(tgt.get(0));
+		if(tgt.size() == 1) SendImmediate(tgt.get(0));
 		
 
 		HashMap<ChunkCoordIntPair,ArrayList<IllusionBlock>> chunkGrouped = GroupByChunk(tgt);
 		
 		if(chunkGrouped.size() > 1) {
 			for(Entry<ChunkCoordIntPair,ArrayList<IllusionBlock>> b : chunkGrouped.entrySet()) {
-				Render(b.getValue());
+				SendImmediate(b.getValue());
 			}
 		} else if(chunkGrouped.size() == 1) {
 			WrapperPlayServerMultiBlockChange packet = new WrapperPlayServerMultiBlockChange();
@@ -151,7 +185,7 @@ public class IllusoryOverlay {
 		}
 	}
 	
-	private void Render(IllusionBlock tgt) {
+	private void SendImmediate(IllusionBlock tgt) {
 		if(tgt == null) return;
 		
 		WrapperPlayServerBlockChange packet = new WrapperPlayServerBlockChange();

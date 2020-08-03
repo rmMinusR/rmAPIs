@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay.ActionPolicy;
@@ -86,6 +87,11 @@ public class IllusionManager implements Listener {
 	@EventHandler
 	public void OnPlayerJoin(PlayerJoinEvent event) {
 		GetIllusoryWorld(event.getPlayer());
+	}
+	
+	@EventHandler
+	public void OnChunkLoad(ChunkLoadEvent event) {
+		for(Player p : Bukkit.getOnlinePlayers()) if(p.getWorld().equals(event.getWorld())) GetIllusoryWorld(p).Rerender(event.getWorld(), event.getChunk());
 	}
 	
 	@EventHandler

@@ -4,9 +4,7 @@ import de.tr7zw.nbtapi.NBTCompound;
 
 public interface IPersistentSerializable {
 	
-	public void ToPersistent(NBTCompound out);
-	public void FromPersistent(NBTCompound in);
-	
-	public static IPersistentSerializable GetUnpopulated(); //Works in JRE 8+
+	public void DataToPersistent(NBTCompound out);
+	public void DataFromPersistent(NBTCompound in);
 	
 }

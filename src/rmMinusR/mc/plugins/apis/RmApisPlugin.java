@@ -9,6 +9,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -21,6 +22,8 @@ import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
 
 public class RmApisPlugin extends JavaPlugin {
 	
+	public static final String KEY_ENTITY_LOAD_RADIUS = "unitylike.entityLoadRadius";
+	
 	public Logger logger;
 	public IllusionManager illusionManager;
 	public UnitylikeEnvironmentManager unitylikeEnv;
@@ -30,6 +33,15 @@ public class RmApisPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		INSTANCE = this;
+		
+		try {
+			FileConfiguration config = getConfig();
+
+			config.addDefault(KEY_ENTITY_LOAD_RADIUS, 16);
+			
+			saveConfig();
+			reloadConfig();
+		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
 			if(logger == null) logger = Logger.getLogger("rmAPIs");
@@ -43,7 +55,7 @@ public class RmApisPlugin extends JavaPlugin {
 		
 		try {
 			logger.info("Initializing Unitylike");
-			unitylikeEnv = new UnitylikeEnvironmentManager();
+			unitylikeEnv = new UnitylikeEnvironmentManager(getConfig().getInt(KEY_ENTITY_LOAD_RADIUS));
 			unitylikeEnv.OnEnable();
 		} catch(Throwable t) { t.printStackTrace(); }
 	}
@@ -64,6 +76,10 @@ public class RmApisPlugin extends JavaPlugin {
 				unitylikeEnv.OnDisable();
 				unitylikeEnv = null;
 			}
+		} catch(Throwable t) { t.printStackTrace(); }
+		
+		try {
+			saveConfig();
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		logger = null;

@@ -48,7 +48,7 @@ public class WrappedPlayer extends WrappedLivingEntity {
 				NBTCompound cnbt = nbtComponents.addCompound();
 				
 				cnbt.setString(KEY_CLASS, s.getClass().getName());
-				s.ToPersistent(cnbt.addCompound(KEY_DATA));
+				s.DataToPersistent(cnbt.addCompound(KEY_DATA));
 			}
 		}
 		
@@ -75,9 +75,9 @@ public class WrappedPlayer extends WrappedLivingEntity {
 			
 			try {
 				//Attempt to get unpopulated serializable
-				IPersistentSerializable s = (IPersistentSerializable)c.getMethod("GetUnpopulated").invoke(null);
+				IPersistentSerializable s = IPersistentSerializableExt.GetBlank(c);
 				//Attempt deserialization
-				s.FromPersistent(r_data);
+				s.DataFromPersistent(r_data);
 			} catch (Exception e) {
 				RmApisPlugin.INSTANCE.logger.warning("Failed to load data for Unitylike Component \""+r_class+"\" for player "+player.getDisplayName());
 				e.printStackTrace();
