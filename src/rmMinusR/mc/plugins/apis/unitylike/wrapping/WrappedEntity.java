@@ -1,17 +1,22 @@
-package rmMinusR.mc.plugins.apis.unitylike.core;
+package rmMinusR.mc.plugins.apis.unitylike.wrapping;
 
 import java.util.ArrayList;
 
 import org.bukkit.entity.Entity;
 
+import rmMinusR.mc.plugins.apis.unitylike.core.Component;
+import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 
 public class WrappedEntity extends GameObject {
 	
 	public Entity entity;
 	
-	protected WrappedEntity(Entity entity) {
+	public WrappedEntity(Entity entity) {
+		super(entity.getWorld());
 		this.entity = entity;
+		
+		AddComponent(new EntityCollider(this));
 	}
 	
 	@Override
@@ -41,6 +46,11 @@ public class WrappedEntity extends GameObject {
 			return out;
 		}
 		return super.GetComponents(clazz);
+	}
+	
+	@Override
+	public String toString() {
+		return "Wrapped entity: "+entity.toString();
 	}
 	
 }

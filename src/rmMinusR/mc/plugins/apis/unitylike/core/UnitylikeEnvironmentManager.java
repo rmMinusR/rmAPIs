@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,6 +18,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.unitylike.wrapping.Terrain;
+import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedEntity;
+import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedLivingEntity;
+import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedPlayer;
 
 public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	
@@ -33,6 +38,8 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 		Bukkit.getPluginManager().registerEvents(this, RmApisPlugin.INSTANCE);
 		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(RmApisPlugin.INSTANCE, this, 1, 1);
 		Time.Init();
+		
+		for(Player p : Bukkit.getOnlinePlayers()) Wrap(p);
 	}
 	
 	public void OnDisable() {
@@ -40,7 +47,14 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 		Bukkit.getScheduler().cancelTask(taskID);
 		
 		ArrayList<GameObject> tmp = new ArrayList<GameObject>(); tmp.addAll(gameObjects);
-		for(GameObject go : tmp) Destroy(go);
+		for(GameObject go : tmp) {
+			try {
+				Destroy(go);
+			} catch(Throwable e) {
+				RmApisPlugin.INSTANCE.logger.warning("An error occurred while disabling "+go.getClass().getName());
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public WrappedEntity Wrap(Entity who) {
@@ -79,6 +93,16 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 		if(!(event.getEntity() instanceof Player) && HasWrapped(event.getEntity())) Destroy(Wrap(event.getEntity()));
 	}
 	
+	public Terrain Wrap(World w) {
+		for(GameObject o : gameObjects) {
+			if(o instanceof Terrain) {
+				Terrain t = (Terrain)o;
+				if(w.equals(t.world)) return (Terrain)o;
+			}
+		}
+		return null;
+	}
+	
 	public void Instantiate(GameObject go) {
 		if(gameObjects.contains(go)) return;
 		
@@ -92,13 +116,15 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	}
 	
 	public void Destroy(GameObject go) {
+		if(go == null) return;
 		if(!gameObjects.contains(go)) return;
 		
 		try {
 			for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c)._SetEnabled(false);
-			for(Component c : go.GetComponents(JavaBehaviour.class)) ((JavaBehaviour)c).OnDestroy();
+			for(Component c : go.GetComponents()) c.OnDestroy();
 		} finally {
 			gameObjects.remove(go);
+			go.OnDestroy();
 		}
 	}
 	
@@ -118,23 +144,25 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 			for(Component c : go.GetComponents(Component.class)) if(clazz.isAssignableFrom(c.getClass())) matches.add(c);
 		}
 		
-		UnitylikeObject[] tmp = null;
+		UnitylikeObject[] tmp = new UnitylikeObject[matches.size()];
 		matches.toArray(tmp);
 		return tmp;
 	}
 	
 	@Override
 	public void run() {
-
-		//Register entities near players as WrappedEntity
 		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			for(Entity e : p.getNearbyEntities(entityAddRadius, entityAddRadius, entityAddRadius)) Wrap(e);
+		//Register Worlds as Terrain, Entities as WrappedEntity
+		for(World w : Bukkit.getWorlds()) {
+			if(Wrap(w) == null) Instantiate(new Terrain(w));
+			for(LivingEntity e : w.getLivingEntities()) Wrap(e);
 		}
 		
-		//Dispatch events
+		//Update environment
 		
 		Time.Update();
+		
+		//Dispatch events
 		
 		for(GameObject go : gameObjects) for(Component c : go.GetComponents(JavaBehaviour.class)) {
 			JavaBehaviour b = (JavaBehaviour)c;
@@ -160,6 +188,12 @@ public final class UnitylikeEnvironmentManager implements Runnable, Listener {
 	public File getDataFolder() throws IOException {
 		File out = new File(RmApisPlugin.INSTANCE.getDataFolder(), "unitylike-players");
 		if(!out.exists()) out.mkdirs();
+		return out;
+	}
+
+	public GameObject[] GetAllObjects() {
+		GameObject[] out = new GameObject[gameObjects.size()];
+		gameObjects.toArray(out);
 		return out;
 	}
 }

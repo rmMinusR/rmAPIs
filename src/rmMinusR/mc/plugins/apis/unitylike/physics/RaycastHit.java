@@ -6,8 +6,13 @@ public final class RaycastHit {
 	
 	public Vector3 point;
 	public Vector3 normal;
-	public Collider collider;
+	public AbstractCollider collider;
 	
-	protected RaycastHit() {}
+	public RaycastHit() {}
+	
+	@Override
+	public String toString() {
+		return "RaycastHit against "+collider+" at pos="+point+", normal="+normal;
+	}
 	
 }

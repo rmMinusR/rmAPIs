@@ -1,4 +1,4 @@
-package rmMinusR.mc.plugins.apis.unitylike.core;
+package rmMinusR.mc.plugins.apis.unitylike.wrapping;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,11 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTListCompound;
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.forgelike.CustomItemManager;
+import rmMinusR.mc.plugins.apis.unitylike.core.Component;
+import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializable;
+import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializableExt;
+import rmMinusR.mc.plugins.apis.unitylike.core.JavaBehaviour;
 
 public class WrappedPlayer extends WrappedLivingEntity {
 	
@@ -23,6 +28,7 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		this.player = player;
 		
 		AddComponent(new PlayerDataHelper(this));
+		AddComponent(new CustomItemManager(this));
 	}
 	
 	protected class PlayerDataHelper extends JavaBehaviour {

@@ -20,6 +20,8 @@ public final class Vector3 implements Cloneable {
 	public static Vector3    down() { return new Vector3( 0, -1,  0); }
 	public static Vector3    back() { return new Vector3( 0,  0, -1); }
 	
+	public static Vector3[] ordinals() { return new Vector3[] { right(), left(), up(), down(), forward(), back() }; }
+	
 	//Ctors
 	public Vector3(Location loc) { this(loc.getX(), loc.getY(), loc.getZ()); }
 	
@@ -96,5 +98,12 @@ public final class Vector3 implements Cloneable {
 	
 	public Vector3 Cross(Vector3 other) { return Cross(this, other); }
 	public static Vector3 Cross(Vector3 a, Vector3 b) { return new Vector3(a.y*b.z - a.z*b.y, a.z*b.x - a.y*b.z, a.x*b.y - a.y*b.x); }
+	public Vector3 ProjToAxis() {
+		Vector3 cpy = Vector3.zero();
+		     if(Math.abs(x) > Math.abs(y) && Math.abs(x) > Math.abs(z)) cpy.x = x;
+		else if(Math.abs(y) > Math.abs(x) && Math.abs(y) > Math.abs(z)) cpy.y = y;
+		else if(Math.abs(z) > Math.abs(x) && Math.abs(z) > Math.abs(y)) cpy.z = z;
+		return cpy;
+	}
 	
 }

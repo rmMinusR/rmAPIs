@@ -112,7 +112,7 @@ public class IllusoryOverlay {
 		shown.remove(tgt);
 		queue.remove(tgt);
 		
-		SendSafe(tgt.GetReality());
+		SendImmediate(tgt.GetReality());
 	}
 	
 	private void SendSafe(ArrayList<IllusionBlock> tgt) {

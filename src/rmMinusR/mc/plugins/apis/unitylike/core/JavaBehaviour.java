@@ -71,6 +71,7 @@ public abstract class JavaBehaviour extends Component {
 	public int GetRenderOrder() { return -1; }
 	public void Render() {}
 	
+	@Override
 	public void OnDestroy() {}
 	
 }

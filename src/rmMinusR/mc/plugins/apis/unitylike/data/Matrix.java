@@ -108,6 +108,20 @@ public final class Matrix implements Cloneable {
 		return out;
 	}
 	
+	@Override
+	public String toString() {
+		String out = "Matrix:";
+		
+		for(int y = 0; y < size; y++) {
+			out += "\n";
+			for(int x = 0; x < size; x++) {
+				out += m[x][y]+", ";
+			}
+		}
+		
+		return out;
+	}
+	
 	public Matrix Resize(int sz) {
 		Matrix out = Identity(sz);
 		
@@ -267,6 +281,13 @@ public final class Matrix implements Cloneable {
 		} else if(size == 2) {
 			//ad-bc
 			return m[0][0]*m[1][1] - m[0][1]*m[1][0];
+		} else if(size == 3) {
+			return m[0][0]*m[1][1]*m[2][2] + m[1][0]*m[2][1]*m[0][2] + m[2][0]*m[0][1]*m[1][2] - m[0][0]*m[2][1]*m[1][2] - m[1][0]*m[0][1]*m[2][2] - m[2][0]*m[1][1]*m[0][2];
+		} else if(size == 4) {
+			return    m[0][0]*DropXY(0, 0).GetDeterminant()
+					- m[1][0]*DropXY(1, 0).GetDeterminant()
+					+ m[2][0]*DropXY(2, 0).GetDeterminant()
+					- m[3][0]*DropXY(3, 0).GetDeterminant();
 		} else {
 			//Recurse
 			float sum = 0;

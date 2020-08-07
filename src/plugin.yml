@@ -2,7 +2,7 @@ name: rmAPIs
 description: rmMinusR's APIs. Supports illusions, painting with Particles, and item/player tagging.
 author: rmMinusR
 main: rmMinusR.mc.plugins.apis.RmApisPlugin
-version: 0.5 (build 23)
+version: 0.7 (build 34)
 api-version: 1.15
 load: POSTWORLD
 depend: [ProtocolLib, NBTAPI, PacketWrapper]

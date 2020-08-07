@@ -11,14 +11,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import de.tr7zw.nbtapi.NBTItem;
+import rmMinusR.mc.plugins.apis.forgelike.CustomItem;
+import rmMinusR.mc.plugins.apis.forgelike.CustomItemManager;
+import rmMinusR.mc.plugins.apis.forgelike.TestCustomItem;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusionManager;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
+import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
 
 public class RmApisPlugin extends JavaPlugin {
@@ -64,6 +70,10 @@ public class RmApisPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try {
+			saveConfig();
+		} catch(Throwable t) { t.printStackTrace(); }
+		
+		try {
 			if(illusionManager != null) {
 				logger.info("Disabling illusions");
 				illusionManager.OnDisable();
@@ -79,9 +89,8 @@ public class RmApisPlugin extends JavaPlugin {
 			}
 		} catch(Throwable t) { t.printStackTrace(); }
 		
-		try {
-			saveConfig();
-		} catch(Throwable t) { t.printStackTrace(); }
+		Bukkit.getScheduler().cancelTasks(this);
+		HandlerList.unregisterAll(this);
 		
 		logger = null;
 		INSTANCE = null;
@@ -126,8 +135,30 @@ public class RmApisPlugin extends JavaPlugin {
 			return true;
 		}
 		
-		if(args[0].equalsIgnoreCase("unitylike-list")) {
-			for(Component i : unitylikeEnv.Wrap(sender).GetComponents()) System.out.println(i);
+		if(args[0].equalsIgnoreCase("unitylike-components")) {
+			for(Component i : unitylikeEnv.Wrap(sender).GetComponents()) unvalidatedSender.sendMessage(i.toString());
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("unitylike-objects")) {
+			for(GameObject i : unitylikeEnv.GetAllObjects()) unvalidatedSender.sendMessage(i.toString());
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("item-listcache")) {
+			for(CustomItem c : CustomItemManager.cache) unvalidatedSender.sendMessage(c.toString());
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("item-listnbt")) {
+			for(String s : DebugUtils.ToString(new NBTItem(sender.getInventory().getItemInMainHand())).split("\n")) {
+				unvalidatedSender.sendMessage(s);
+			}
+			return true;
+		}
+		
+		if(args[0].equalsIgnoreCase("item-make")) {
+			CustomItem.CreateNewBlank(sender.getInventory().getItemInMainHand(), TestCustomItem.class);
 			return true;
 		}
 		//END TESTING

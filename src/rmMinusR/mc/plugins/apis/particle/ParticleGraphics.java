@@ -4,6 +4,8 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
+import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
+
 public class ParticleGraphics {
 	public static void drawLine(World w, Vector a, Vector b, AdvancedParticleTemplate p, double relstep) {
 		double delta_i = relstep/a.distance(b);
@@ -134,5 +136,17 @@ public class ParticleGraphics {
 			Vector pos = origin.clone().add(right.clone().multiply(ix/(float)image.w)).add(up.clone().multiply(-iy/(float)image.h));
 			template.copy().setColor(px.getRed(), px.getGreen(), px.getBlue()).instantiate(w, pos);
 		}
+	}
+	
+	public static void drawDebugCross(World w, Vector3 pos, float size) {
+		AdvancedParticleTemplate template = new AdvancedParticleTemplate(Particle.REDSTONE);
+		
+		Vector3 dx = Vector3.right().Mul(size);
+		Vector3 dy = Vector3.up().Mul(size);
+		Vector3 dz = Vector3.forward().Mul(size);
+		
+		drawLine(w, pos.Add(dx).ToBukkit(), pos.Sub(dx).ToBukkit(), template.setColor(255, 0, 0), 0.2f);
+		drawLine(w, pos.Add(dy).ToBukkit(), pos.Sub(dy).ToBukkit(), template.setColor(0, 255, 0), 0.2f);
+		drawLine(w, pos.Add(dz).ToBukkit(), pos.Sub(dz).ToBukkit(), template.setColor(0, 0, 255), 0.2f);
 	}
 }

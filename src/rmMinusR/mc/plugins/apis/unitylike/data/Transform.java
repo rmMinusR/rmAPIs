@@ -50,8 +50,8 @@ public final class Transform extends Component {
 		matrix = Matrix.Mul(m_pos, m_look);
 	}
 	
-	public Matrix GetWorldToLocalMatrix() { return matrix.clone();   }
-	public Matrix GetLocalToWorldMatrix() { return matrix.Inverse(); }
+	public Matrix GetWorldToLocalMatrix() { return matrix.Inverse();   }
+	public Matrix GetLocalToWorldMatrix() { return matrix.clone(); }
 	
 	public void WriteTo(Location loc) {
 		Vector3 pos = GetPosition();

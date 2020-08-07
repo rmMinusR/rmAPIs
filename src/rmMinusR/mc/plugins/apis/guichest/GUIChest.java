@@ -25,18 +25,7 @@ public class GUIChest implements Listener { //WARNING UNTESTED
 		callbacks = new ItemStackCallback[rows*9];
 	}
 	
-	public boolean Matches(Inventory other) {
-		if(other.getSize() != surf.getSize()) return false;
-		
-		for(int i = 0; i < callbacks.length; i++) {
-			
-			ItemStack a = surf .getStorageContents()[i];
-			ItemStack b = other.getStorageContents()[i];
-			
-			if( a.getAmount() != b.getAmount() || !a.isSimilar(b) ) return false;
-		}
-		return true;
-	}
+	public boolean Matches(Inventory other) { return InventoryExt.Matches(surf, other); }
 	
 	public void Show() {
 		viewer.openInventory(surf);

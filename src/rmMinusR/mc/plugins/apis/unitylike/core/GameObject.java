@@ -2,15 +2,20 @@ package rmMinusR.mc.plugins.apis.unitylike.core;
 
 import java.util.ArrayList;
 
+import org.bukkit.World;
+
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
+import rmMinusR.mc.plugins.apis.unitylike.physics.AbstractCollider;
 
 public class GameObject extends UnitylikeObject {
 	
 	private ArrayList<Component> components;
+	public World world;
 	
-	public GameObject() {
+	public GameObject(World world) {
 		components = new ArrayList<Component>();
+		this.world = world;
 	}
 	
 	public final void Instantate() { Instantiate(this); }
@@ -25,6 +30,10 @@ public class GameObject extends UnitylikeObject {
 	public Transform GetTransform() {
 		Transform out = (Transform) GetComponent(Transform.class);
 		return out != null ? out : new Transform();
+	}
+
+	public AbstractCollider GetCollider() {
+		return (AbstractCollider) GetComponent(AbstractCollider.class);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -44,6 +53,12 @@ public class GameObject extends UnitylikeObject {
 	public void RemoveComponent(Class<? extends Component> rem) {
 		ArrayList<Component> matches = new ArrayList<Component>();
 		for(Component c : components) if(c.getClass().isAssignableFrom(rem)) matches.add(c);
+		components.removeAll(matches);
+	}
+	
+	public void RemoveComponent(Component rem) {
+		ArrayList<Component> matches = new ArrayList<Component>();
+		for(Component c : components) if(c.equals(rem)) matches.add(c);
 		components.removeAll(matches);
 	}
 	
@@ -77,4 +92,5 @@ public class GameObject extends UnitylikeObject {
 		out[out.length-1] = GetTransform();
 		return out;
 	}
+	
 }
