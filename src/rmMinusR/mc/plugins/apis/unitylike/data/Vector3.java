@@ -55,6 +55,7 @@ public final class Vector3 implements Cloneable {
 	}
 	
 	//Basic
+	public Vector3 AddInPlace(Vector3 other) { this.x += other.x; this.y += other.y; this.z += other.z; return this; }
 	public Vector3 Add(Vector3 other) { return Add(this, other); }
 	public static Vector3 Add(Vector3 a, Vector3... etc) {
 		if(etc.length == 0) {
@@ -105,5 +106,7 @@ public final class Vector3 implements Cloneable {
 		else if(Math.abs(z) > Math.abs(x) && Math.abs(z) > Math.abs(y)) cpy.z = z;
 		return cpy;
 	}
+	
+	public Vector3 MulPiecewise(Vector3 o) { return new Vector3(x*o.x, y*o.y, z*o.z); }
 	
 }

@@ -8,22 +8,26 @@ import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 import rmMinusR.mc.plugins.apis.unitylike.physics.BoxCollider;
 
-public class BlockCollider extends BoxCollider {
+public final class BlockCollider extends BoxCollider {
 	public Block ref;
 	
 	public BlockCollider(Block b) {
-		super(null, Vector3.one(), Vector3.zero());
+		super(new FakeGO(b), Vector3.zero(), Vector3.one());
 		ref = b;
-		gameObject = new FakeGO(this);
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName()+"{block="+ref+"}";
 	}
 	
 	public static class FakeGO extends GameObject {
 		
 		private BlockVector3 pos;
 		
-		public FakeGO(BlockCollider src) {
-			super(src.ref.getWorld());
-			this.pos = new BlockVector3(src.ref);
+		public FakeGO(Block ref) {
+			super(ref.getWorld());
+			this.pos = new BlockVector3(ref);
 		}
 		
 		@Override

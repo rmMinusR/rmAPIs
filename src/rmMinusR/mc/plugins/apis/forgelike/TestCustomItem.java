@@ -24,6 +24,11 @@ public class TestCustomItem extends CustomItem {
 	}
 	
 	@Override
+	public void OnTick(Context context, LivingEntity holder) {
+		
+	}
+	
+	@Override
 	public boolean OnRightClick(LivingEntity holder) {
 		WrappedLivingEntity wrappedHolder = (WrappedLivingEntity) RmApisPlugin.INSTANCE.unitylikeEnv.Wrap(holder);
 		Vector3 pos = new Vector3(holder.getEyeLocation());
@@ -37,17 +42,17 @@ public class TestCustomItem extends CustomItem {
 		if(hit != null) {
 			
 			BoxCollider coll = (BoxCollider)hit.collider;
-			Vector3 collCenter = coll.offset.Add(coll.gameObject.GetTransform().GetPosition());
+			Vector3 collCenter = coll.gameObject.GetTransform().GetLocalToWorldMatrix().TransformPoint(coll.local_offset);
 			
 			ParticleGraphics.wireCube(
 						holder.getWorld(),
 						collCenter.Sub(coll.size.Mul(0.51f)).ToBukkit(),
 						collCenter.Add(coll.size.Mul(0.51f)).ToBukkit(),
-						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(255, 0, 0),
-						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(0, 255, 0),
-						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(0, 0, 255),
+						new AdvancedParticleTemplate(Particle.END_ROD),
 						0.1f
 					);
+			
+			ParticleGraphics.drawDebugCross(holder.getWorld(), hit.point, 1);
 			
 			ParticleGraphics.drawLine(
 						holder.getWorld(),
@@ -73,7 +78,16 @@ public class TestCustomItem extends CustomItem {
 	
 	@Override
 	public boolean OnLeftClick(LivingEntity holder) {
-		holder.setVelocity(RmApisPlugin.INSTANCE.unitylikeEnv.Wrap(holder).GetTransform().forward().ToBukkit());
+		WrappedLivingEntity wrappedHolder = (WrappedLivingEntity) RmApisPlugin.INSTANCE.unitylikeEnv.Wrap(holder);
+		Vector3 pos = new Vector3(holder.getEyeLocation());
+		Vector3 look_vec = wrappedHolder.GetTransform().forward();
+		
+		RaycastHit[] allHits = Physics.RaycastAll(holder.getWorld(), pos, look_vec, 25, x -> x.gameObject != wrappedHolder);
+		RaycastHit hit = allHits.length > 0 ? allHits[0] : null;
+		
+		if(hit != null && hit.collider != null) {
+			hit.collider.DebugRender();
+		}
 		
 		return false;
 	}

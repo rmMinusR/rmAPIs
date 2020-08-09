@@ -101,4 +101,14 @@ public final class Quaternion implements Cloneable {
 				).Resize(4);
 	}
 	
+	public static Quaternion Look(Vector3 rel_towards) {
+		float yaw = Mathf.Atan2(rel_towards.x, rel_towards.z);
+		float pitch = Mathf.Atan2(rel_towards.y, (float)Math.sqrt(rel_towards.x*rel_towards.x+rel_towards.z*rel_towards.z));
+		
+		Matrix lookYaw   = Matrix.RotateY(yaw  );
+		Matrix lookPitch = Matrix.RotateX(pitch);
+		
+		return new Transform(Matrix.Mul(lookYaw, lookPitch)).GetRotation();
+	}
+	
 }

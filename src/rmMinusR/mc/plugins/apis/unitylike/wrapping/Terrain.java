@@ -1,15 +1,14 @@
 package rmMinusR.mc.plugins.apis.unitylike.wrapping;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.UUID;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.data.BlockVector3;
-import rmMinusR.mc.plugins.apis.unitylike.data.Plane;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 import rmMinusR.mc.plugins.apis.unitylike.physics.AbstractCollider;
 import rmMinusR.mc.plugins.apis.unitylike.physics.Line;
@@ -21,7 +20,7 @@ public class Terrain extends GameObject {
 	
 	public Terrain(World world) {
 		super(world);
-		System.out.println("New collider for world "+world.getName());
+		Debug.Log("Initialized Raycasting collider for \""+world.getName()+"\"");
 		worldID = world.getUID();
 		AddComponent(new Collider(this));
 	}
@@ -73,49 +72,36 @@ public class Terrain extends GameObject {
 			return out;
 		}
 		
-		private ArrayList<RaycastHit> NextBlockBoundaries(Vector3 fpos, Vector3 dir) {
-			Line line = new Line(fpos, dir);
-			BlockVector3 lpos = new BlockVector3(fpos);
+		private ArrayList<Block> SelectRegion(BlockVector3 in1, BlockVector3 in2) {
+			BlockVector3 lo = new BlockVector3(Math.min(in1.x, in2.x), Math.min(in1.y, in2.y), Math.min(in1.z, in2.z));
+			BlockVector3 hi = new BlockVector3(Math.max(in1.x, in2.x), Math.max(in1.y, in2.y), Math.max(in1.z, in2.z));
 			
-			ArrayList<Plane> planes = new ArrayList<Plane>();
-			
-			for(Vector3 ord : Vector3.ordinals()) {
-				planes.add( new Plane(
-								lpos.GetCenterOfBlock().Add(
-									ord.WithMagnitude(0.5f)
-								),
-								ord
-						) );
+			ArrayList<Block> region = new ArrayList<Block>();
+			for(long x = lo.x; x <= hi.x; x++) for(long y = lo.y; y <= hi.y; y++) for(long z = lo.z; z <= hi.z; z++) {
+				BlockVector3 i = new BlockVector3(x, y, z);
+				Block b = i.Fetch(gameObject.world);
+				if(b != null && !b.isEmpty()) region.add(b);
 			}
 			
-			ArrayList<RaycastHit> transitions = new ArrayList<RaycastHit>();
-			for(Plane p : planes) {
-				RaycastHit h = new RaycastHit();
-				h.point = p.GetIntercept(line);
-				h.normal = p.normal.clone(); //TODO why does this always point towards axial-negative
-				
-				BlockVector3 blockPos = h.point.Sub(h.normal.WithMagnitude(0.05f)).ToBlockVector3();
-				Block block = blockPos.Fetch(gameObject.world);
-				h.collider = new BlockCollider(block);
-				
-				if(line.GetTAt(h.point) > 0.01f) transitions.add(h);
-			}
-			
-			transitions.sort(new Comparator<RaycastHit>() {
-				@Override
-				public int compare(RaycastHit a, RaycastHit b) {
-					float da = Vector3.Distance(fpos, a.point);
-					float db = Vector3.Distance(fpos, b.point);
-					if(da > db) return 1;
-					if(da < db) return -1;
-					return 0;
-				}
-			});
-			
-			return transitions;
+			return region;
 		}
 		
-		//FIXME not ideal...
+		private ArrayList<Block> SelectByClosestApproach(ArrayList<Block> in, Line line) {
+			ArrayList<Block> out = new ArrayList<Block>();
+			
+			for(Block b : in) {
+				BlockVector3 lpos = new BlockVector3(b);
+				Vector3 fpos = lpos.GetCenterOfBlock();
+				
+				float dist = fpos.Distance(line.GetClosestPoint(fpos));
+				
+				if(dist <= Math.sqrt(3)) out.add(b);
+			}
+			
+			return out;
+		}
+		
+		//FIXME does this even work???
 		@Override
 		public Vector3 GetClosestPoint(Vector3 global_point) {
 			for(int r = 0; r < 1; r++) { //FIXME magic number
@@ -142,16 +128,40 @@ public class Terrain extends GameObject {
 		
 		//Technically it's a raymarch
 		@Override
-		public RaycastHit TryRaycast(Line ray) {
+		public RaycastHit TryRaycast(Line _ray) {
+			Line ray = new Line(_ray.origin, _ray.direction.Normalize());
 			System.out.println("Terrain raymarching on "+ray.toString());
 			
-			float d = 0;
+			float step = 1;
+			float t = 0;
 			for(int iter = 0; iter < 32; iter++) {
-				Vector3 cur_pos = ray.GetByDistance(d);
+				Vector3 cur_pos = ray.GetByT(t);
 				
-				System.out.println("Iteration "+iter+", D="+d+" pos="+cur_pos);
+				System.out.println("Iteration "+iter+", D="+t+" pos="+cur_pos+", selection region="+ray.GetByT(t).ToBlockVector3()+"-"+ray.GetByT(t+step).ToBlockVector3());
 				
-				float step = 1;
+				ArrayList<Block> region = SelectRegion(
+						ray.GetByT(t).ToBlockVector3(),
+						ray.GetByT(t+step).ToBlockVector3()
+				);
+				ArrayList<Block> possibleCollisions = SelectByClosestApproach(region, ray);
+				
+				System.out.println("Region["+region.size()+"]:");
+				for(Block b : region) System.out.println(b);
+				System.out.println("Possible collisions["+possibleCollisions.size()+"]:");
+				for(Block b : possibleCollisions) System.out.println(b);
+				
+				RaycastHit collision = null;
+				for(Block b : possibleCollisions) {
+					BlockCollider b_coll = new BlockCollider(b);
+					RaycastHit b_hit = b_coll.TryRaycast(ray);
+					if(b_hit != null) {
+						if(collision == null || _ray.origin.Distance(collision.point) > _ray.origin.Distance(b_hit.point)) {
+							collision = b_hit;
+						}
+					}
+				}
+				if(collision != null) return collision;
+				/*
 				ArrayList<RaycastHit> nextBlockBoundaries = NextBlockBoundaries(cur_pos, ray.direction);
 				
 				for(RaycastHit boundary : nextBlockBoundaries) {
@@ -161,12 +171,17 @@ public class Terrain extends GameObject {
 						boundary.collider = new BlockCollider(nextBlock);
 						return boundary;
 					}
-				}
+				}*/
 				
-				d += step;
+				t += step;
 			}
 			
 			return null;
+		}
+
+		@Override
+		public void DebugRender() {
+			
 		}
 	}
 	

@@ -39,7 +39,7 @@ public final class Matrix implements Cloneable {
 		if(size*size != in.length) throw new IllegalArgumentException("Must have a square input array!");
 		
 		Matrix out = new Matrix(size);
-		for(int i = 0; i < in.length; i++) out.m[i%in.length][i/in.length] = in[i];
+		for(int x = 0; x < size; x++) for(int y = 0; y < size; y++) out.m[x][y] = in[x+y*size];
 		
 		return out;
 	}
@@ -125,7 +125,7 @@ public final class Matrix implements Cloneable {
 	public Matrix Resize(int sz) {
 		Matrix out = Identity(sz);
 		
-		for(int i = 0; i < out.size; i++) for(int j = 0; j < out.size; j++) out.m[i][j] = this.m[i][j];
+		for(int i = 0; i < out.size && i < this.size; i++) for(int j = 0; j < out.size && j < this.size; j++) out.m[i][j] = this.m[i][j];
 		
 		return out;
 	}

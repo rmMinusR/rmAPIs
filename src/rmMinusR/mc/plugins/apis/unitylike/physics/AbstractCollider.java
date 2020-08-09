@@ -10,10 +10,14 @@ public abstract class AbstractCollider extends Component {
 		super(gameObject);
 	}
 	
-	public abstract boolean IsWithin(Vector3 point);
+	public boolean IsWithin(Vector3 point) {
+		return GetClosestPoint(point).Distance(point) < 0.05f;
+	}
 	public abstract Vector3 GetClosestPoint(Vector3 global_point);
 	public abstract RaycastHit TryRaycast(Line ray);
-
+	
+	public abstract void DebugRender();
+	
 	public final float DistanceTo(Vector3 global_point) {
 		return GetClosestPoint(global_point).Distance(global_point);
 	}

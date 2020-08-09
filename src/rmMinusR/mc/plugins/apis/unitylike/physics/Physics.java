@@ -60,7 +60,7 @@ public final class Physics {
 		for(AbstractCollider c : colliders) {
 			System.out.println("Attempting raycast on "+c);
 			RaycastHit hit = c.TryRaycast(ray);
-			if(hit != null && Vector3.Distance(origin, hit.point) < maxDistance) hits.add(hit);
+			if(hit != null && Vector3.Distance(origin, hit.point) < maxDistance && ray.GetTAt(hit.point) > 0) hits.add(hit);
 		}
 		
 		hits.sort(new Comparator<RaycastHit>() {

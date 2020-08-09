@@ -2,13 +2,15 @@ package rmMinusR.mc.plugins.apis.unitylike.data;
 
 public final class Mathf {
 	
+	public static final float PI = 3.14159265358462643380f;
+
 	private Mathf() {}
 	
 	public static float Abs(float f) { return f > 0 ? f : -f; }
 
 	public static float Acos(float f) { return (float) Math.acos(f); }
 
-	public static boolean Approximately(float a, float b) { return Abs(a-b) < 0.0001f; } // FIXME magic number
+	public static boolean Approximately(float a, float b) { return Abs(a-b) < 0.005f; } // FIXME magic number
 
 	public static float Asin(float f) { return (float) Math.asin(f); }
 
@@ -38,4 +40,10 @@ public final class Mathf {
 	public static int FloorToInt(float f) { return (int) Floor(f); }
 	
 	public static float Lerp(float x, float a, float b) { return (1-x)*a + x*b; }
+
+	public static float Fmap(float x, float lo1, float hi1, float lo2, float hi2) { return (x-lo1)/(hi1-lo1)*(hi2-lo2)+lo2; }
+
+	public static boolean Between(float x, double lo, double hi) {
+		return lo <= x && x <= hi;
+	}
 }

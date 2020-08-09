@@ -16,6 +16,11 @@ public final class Transform extends Component {
 		matrix = Matrix.Identity(4);
 	}
 	
+	protected Transform(Matrix mat) {
+		super(null);
+		this.matrix = mat;
+	}
+	
 	public Transform(Vector pos) { this((GameObject)null, pos); }
 	public Transform(GameObject gameObject, Vector pos) { this(new Vector3(pos)); }
 	
@@ -76,7 +81,7 @@ public final class Transform extends Component {
 		Vector3 scl_part = GetScale();
 		
 		Matrix rot_part = matrix.Resize(3);
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < rot_part.size; i++) {
 			rot_part.m[0][i] /= scl_part.x;
 			rot_part.m[1][i] /= scl_part.y;
 			rot_part.m[2][i] /= scl_part.z;
