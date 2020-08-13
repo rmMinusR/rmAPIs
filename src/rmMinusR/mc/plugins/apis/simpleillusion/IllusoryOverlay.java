@@ -281,43 +281,4 @@ public class IllusoryOverlay {
 		Cancel, Passthrough, ShowReality
 	}
 	
-	/*
-	
-	public static abstract class Illusion {
-		public World world;
-		
-		public static ProtocolManager protocolManager;
-		
-		public Illusion(World w) {
-			world = w;
-			if(protocolManager == null) protocolManager = ProtocolLibrary.getProtocolManager();
-		}
-		
-		public abstract void Hide();
-		public abstract void Show(Player target);
-	}
-	
-	public static class IllusionBlock extends Illusion {
-
-		public Block block;
-		
-		public IllusionBlock(World w, Block block) {
-			super(w);
-			this.block = block;
-		}
-
-		@Override
-		public void Hide() {
-			
-		}
-
-		@Override
-		public void Show(Player target) {
-			PacketContainer container = new PacketContainer(PacketType.Play.Server.BLOCK_CHANGE);
-			
-		}
-		
-	}
-	
-	// */
 }

@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
@@ -50,9 +51,13 @@ public abstract class CustomItem {
 			//Attempt to instantiate
 			return ctor.newInstance(stack, r_data);
 		} catch (ClassNotFoundException | ClassCastException e) {
-			throw new IllegalStateException("Tried to instantiate item \""+r_type+"\" but found no such class! Did you update/remove a plugin?");
+			IllegalStateException ex = new IllegalStateException("Tried to instantiate item \""+r_type+"\" but found no such class! Did you update/remove a plugin?");
+			ex.addSuppressed(e);
+			throw ex;
 		} catch (Throwable t) {
-			throw new IllegalStateException("Tried to instantiate item \""+r_type+"\" but found no valid constructor!");
+			IllegalStateException ex = new IllegalStateException("Tried to instantiate item \""+r_type+"\" but found no valid constructor!");
+			ex.addSuppressed(t);
+			throw ex;
 		}
 	}
 	
@@ -78,11 +83,11 @@ public abstract class CustomItem {
 		 * See https://wiki.vg/Inventory#Player_Inventory
 		 */
 		
-		public final byte slot;
+		public final byte packetSlot; //Formatted for packets
 		public final Entity holder;
 		
 		private Context(Item groundItem) {
-			this.slot = ON_GROUND_ID;
+			this.packetSlot = ON_GROUND_ID;
 			this.holder = groundItem;
 		}
 		
@@ -95,43 +100,65 @@ public abstract class CustomItem {
 		*/
 		
 		private Context(byte data, Entity holder) {
-			this.slot = data;
+			this.packetSlot = data;
 			this.holder = holder;
 		}
 		
 		public static final byte ON_GROUND_ID = -3;
 		//public static final byte  IN_CHEST_ID = -4;
 		
-		public boolean IsOnGround() { return slot == ON_GROUND_ID; }
+		public boolean IsOnGround() { return packetSlot == ON_GROUND_ID; }
 		//public boolean IsInChest () { return slot ==  IN_CHEST_ID; }
 		
-		public boolean IsCursor() { return slot == -1; }
+		public boolean IsCursor() { return packetSlot == -1; }
 		
-		public boolean IsCraft2x2Out() { return slot == 0; }
-		public boolean IsCraft2x2In () { return 1 <= slot && slot <= 4; }
+		public boolean IsCraft2x2Out() { return packetSlot == 0; }
+		public boolean IsCraft2x2In () { return 1 <= packetSlot && packetSlot <= 4; }
 		
 		public boolean IsArmor() { return IsArmorHead() || IsArmorBody() || IsArmorLegs() || IsArmorFeet(); }
-		public boolean IsArmorHead() { return slot == ARMOR_HEAD_ID; }
-		public boolean IsArmorBody() { return slot == ARMOR_BODY_ID; }
-		public boolean IsArmorLegs() { return slot == ARMOR_LEGS_ID; }
-		public boolean IsArmorFeet() { return slot == ARMOR_FEET_ID; }
+		public boolean IsArmorHead() { return packetSlot == ARMOR_HEAD_ID; }
+		public boolean IsArmorBody() { return packetSlot == ARMOR_BODY_ID; }
+		public boolean IsArmorLegs() { return packetSlot == ARMOR_LEGS_ID; }
+		public boolean IsArmorFeet() { return packetSlot == ARMOR_FEET_ID; }
 		public static final byte ARMOR_HEAD_ID = 5;
 		public static final byte ARMOR_BODY_ID = 6;
 		public static final byte ARMOR_LEGS_ID = 7;
 		public static final byte ARMOR_FEET_ID = 8;
 		
-		public boolean IsMainInventory() { return 9 <= slot && slot <= 35; }
-		public boolean IsHotbar() { return 36 <= slot && slot <= 44; }
+		public boolean IsMainInventory() { return 9 <= packetSlot && packetSlot <= 35; }
+		public boolean IsHotbar() { return 36 <= packetSlot && packetSlot <= 44; }
 		
-		public boolean IsOffHand() { return slot == 45; }
+		public boolean IsOffHand() { return packetSlot == 45; }
+		
+		public int ToPlayerInventorySlotID() {
+			if(IsHotbar()) return packetSlot-36;
+			if(IsOffHand()) return 36;
+			if(IsMainInventory()) return packetSlot;
+			throw new IllegalStateException("Can't decode slot ID "+(int)packetSlot);
+		}
 		
 		public static Context Detect(ItemStack what, PlayerInventory inv) {
-			for(byte i = 0; i < inv.getSize(); i++) if(what.equals(inv.getItem(i))) return BySlotID(i, inv.getHolder());
+			for(byte i = 0; i < inv.getSize(); i++) if(what.equals(inv.getItem(i))) return ByPlayerInventorySlotID(i, inv.getHolder());
 			return null;
 		}
-		public static Context BySlotID( byte  data, Entity holder) { return new Context(data, holder); }
-		public static Context OnGround( Item  item) { return new Context( item); }
-		//public static Context InChest (Chest chest) { return new Context(chest); }
+		public static Context ByPacketSlotID(byte data, Entity holder) { return new Context(data, holder); }
+		public static Context ByPlayerInventorySlotID(int slot, HumanEntity holder) {
+			//Hotbar
+			if(0 <= slot && slot < 9) return new Context((byte)(slot+36), holder);
+			//Main inventory
+			if(9 <= slot && slot < 36) return new Context((byte)slot, holder);
+			//Armor: HBLF
+			if(slot == 39) return new Context(ARMOR_HEAD_ID, holder);
+			if(slot == 38) return new Context(ARMOR_BODY_ID, holder);
+			if(slot == 37) return new Context(ARMOR_LEGS_ID, holder);
+			if(slot == 36) return new Context(ARMOR_FEET_ID, holder);
+			//Offhand
+			if(slot == 40) return new Context((byte)45, holder);
+			//Couldn't decode
+			throw new IllegalArgumentException("Slot "+slot);
+		}
+		public static Context OnGround(Item item) { return new Context( item); }
+		//public static Context InChest(Chest chest) { return new Context(chest); }
 		
 	}
 	
@@ -142,6 +169,8 @@ public abstract class CustomItem {
 	public boolean OnRightClick(LivingEntity holder) { return true; }
 	
 	public abstract CustomMaterial GetMaterial();
+	
+	public abstract ItemStack GetRenderType();
 	
 	public void OnExitScope() {
 		Write();

@@ -40,7 +40,7 @@ public final class Quaternion implements Cloneable {
 				);
 		} else {
 			Quaternion[] etc2 = new Quaternion[etc.length-1];
-			for(int i = 0; i < etc.length; i++) etc2[i] = etc[i+1];
+			for(int i = 0; i < etc.length-1; i++) etc2[i] = etc[i+1];
 			return Mul(a, Mul(etc[0], etc2));
 		}
 	}
@@ -55,42 +55,51 @@ public final class Quaternion implements Cloneable {
 				);
 	}
 	
-	public static Quaternion FromEulerAngles(Vector3 euler) { //Order: Y->X->Z
-		//This is cheating and super not performant
-		//FIXME figure out how to actually do this
-		return Mul(
-					FromAxisRotation(Vector3.forward(), euler.z),
-					FromAxisRotation(Vector3.  right(), euler.x),
-					FromAxisRotation(Vector3.     up(), euler.y)
+	public static Quaternion FromEulerAngles(Vector3 e) { //Order: Y->X->Z
+		//Using https://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToQuaternion/steps/index.htm
+		//heading = y
+		//attitude = x
+		//bank = z
+		//c1 = cos y
+		//c2 = cos x
+		//c3 = cos z
+		//s1 = sin y
+		//s2 = sin x
+		//s3 = sin z
+		return new Quaternion(
+					Mathf.Cos(e.y/2)*Mathf.Cos(e.x/2)*Mathf.Cos(e.z/2) - Mathf.Sin(e.y/2)*Mathf.Sin(e.x/2)*Mathf.Sin(e.z/2),
+					Mathf.Sin(e.y/2)*Mathf.Sin(e.x/2)*Mathf.Cos(e.z/2) + Mathf.Cos(e.y/2)*Mathf.Cos(e.x/2)*Mathf.Sin(e.z/2),
+					Mathf.Sin(e.y/2)*Mathf.Cos(e.x/2)*Mathf.Cos(e.z/2) + Mathf.Cos(e.y/2)*Mathf.Sin(e.x/2)*Mathf.Sin(e.z/2),
+					Mathf.Cos(e.y/2)*Mathf.Sin(e.x/2)*Mathf.Cos(e.z/2) - Mathf.Sin(e.y/2)*Mathf.Cos(e.x/2)*Mathf.Sin(e.z/2)
 				);
 	}
 	
 	public Vector3 ToEulerAngles() { //Order: Y->X->Z
-		boolean attitudeDef = false, headingDef = false, bankDef = false; //This is such a stupid fix
-		float attitude = 0, heading = 0, bank = 0;
+		boolean bankDef = false, headingDef = false, attitudeDef = false; //FIXME Implement nullable. This is such a stupid fix
+		float bank = 0, heading = 0, attitude = 0;
 		
 		//Gimbal lock protection
 		//See http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 		if(x*y+z*w == 0.5f) {
 			heading = (float) (2*Math.atan2(x, w));
-			bank = 0;
+			attitude = 0;
 			headingDef = true;
-			bankDef = true;
+			attitudeDef = true;
 		}
 		
 		if(x*y+z*w == -0.5f) {
 			heading = (float) (-2*Math.atan2(x, w));
-			bank = 0;
+			attitude = 0;
 			headingDef = true;
-			bankDef = true;
+			attitudeDef = true;
 		}
 		
-		//See https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
-		if(!attitudeDef) attitude = (float) Math.asin(2*x*y + 2*z*w);
+		if(!    bankDef)     bank = (float) Math.asin(2*x*y + 2*z*w);
 		if(! headingDef)  heading = (float) Math.atan2(2*y*w-2*x*z, 1-2*y*y-2*z*z);
-		if(!    bankDef)     bank = (float) Math.atan2(2*x*w-2*y*z, 1-2*x*x-2*z*z);
+		if(!attitudeDef) attitude = (float) Math.atan2(2*x*w-2*y*z, 1-2*x*x-2*z*z);
+		
 		return new Vector3(attitude, heading, bank);
-		}
+	}
 	
 	public Matrix ToMatrix() {
 		//See https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm

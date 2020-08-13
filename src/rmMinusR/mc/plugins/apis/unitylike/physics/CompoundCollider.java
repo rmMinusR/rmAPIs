@@ -11,7 +11,7 @@ public class CompoundCollider extends AbstractCollider {
 		super(gameObject);
 		this.colliders = colliders;
 	}
-
+	
 	@Override
 	public boolean IsWithin(Vector3 point) {
 		for(AbstractCollider c : colliders) if(c.IsWithin(point)) return true;
@@ -29,10 +29,10 @@ public class CompoundCollider extends AbstractCollider {
 	}
 
 	@Override
-	public RaycastHit TryRaycast(Line ray) {
+	public RaycastHit TryRaycast(Line ray, float max_dist) {
 		RaycastHit closest = null;
 		for(AbstractCollider c : colliders) {
-			RaycastHit hit = c.TryRaycast(ray);
+			RaycastHit hit = c.TryRaycast(ray, max_dist);
 			if(hit != null && (closest == null || closest.point.Distance(ray.origin) > hit.point.Distance(ray.origin))) closest = hit;
 		}
 		if(closest != null) closest.collider = this;

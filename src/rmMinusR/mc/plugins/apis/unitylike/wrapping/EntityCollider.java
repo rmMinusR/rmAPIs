@@ -9,12 +9,19 @@ public class EntityCollider extends BoxCollider {
 		super(
 				wrappedEntity,
 				new Vector3(
+						0,
+						wrappedEntity.entity.getHeight()/2, //Minecraft entites' anchor is at their feet
+						0
+					),
+				new Vector3(
 						wrappedEntity.entity.getWidth(),
 						wrappedEntity.entity.getHeight(),
 						wrappedEntity.entity.getWidth()
 					),
-				Vector3.zero()
+				BoxCollider.getLTW_YawOnly
 			);
 	}
+	
+	
 	
 }

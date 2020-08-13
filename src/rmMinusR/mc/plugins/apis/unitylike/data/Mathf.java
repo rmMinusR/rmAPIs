@@ -6,11 +6,11 @@ public final class Mathf {
 
 	private Mathf() {}
 	
-	public static float Abs(float f) { return f > 0 ? f : -f; }
+	public static float Abs(double f) { return (float)(f > 0 ? f : -f); }
 
 	public static float Acos(float f) { return (float) Math.acos(f); }
 
-	public static boolean Approximately(float a, float b) { return Abs(a-b) < 0.005f; } // FIXME magic number
+	public static boolean Approximately(double a, double b) { return Abs(a-b) < 0.005f; } // FIXME magic number
 
 	public static float Asin(float f) { return (float) Math.asin(f); }
 
@@ -46,4 +46,7 @@ public final class Mathf {
 	public static boolean Between(float x, double lo, double hi) {
 		return lo <= x && x <= hi;
 	}
+
+	public static float Cos(float x) { return (float) Math.cos(x); }
+	public static float Sin(float x) { return (float) Math.sin(x); }
 }

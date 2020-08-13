@@ -75,7 +75,11 @@ public final class Vector3 implements Cloneable {
 	public Vector3 Mul(float scalar) { return Mul(this, scalar); }
 	public static Vector3 Mul(Vector3 v, float s) { return new Vector3(v.x*s, v.y*s, v.z*s); }
 	
-	public Vector3 Proj(Vector3 other) { return other.WithMagnitude( this.Dot(other)/this.GetMagnitude()/other.GetMagnitude() ); }
+	public Vector3 AlignTo(Vector3 other) {
+		Vector3 inv = Mul(-1);
+		return (this.Distance(other) <= inv.Distance(other))
+			  ? this.clone()         :  inv;
+	}
 	
 	//Pythagorean
 	public float GetMagnitude() { return (float) Math.sqrt(x*x + y*y + z*z); }
@@ -85,6 +89,8 @@ public final class Vector3 implements Cloneable {
 	public float Distance(Vector3 other) { return Distance(this, other); }
 	public static float Distance(Vector3 a, Vector3 b) { return Sub(a, b).GetMagnitude(); }
 	
+	public Vector3 Proj(Vector3 other) { return other.WithMagnitude( this.Dot(other)/this.GetMagnitude()/other.GetMagnitude() ); }
+
 	//Trigonometry
 	public float Angle(Vector3 other) { return Angle(this, other); }
 	public static float Angle(Vector3 a, Vector3 b) { return (float) Math.acos(a.Dot(b)/a.GetMagnitude()/b.GetMagnitude()); }

@@ -13,23 +13,26 @@ public final class CustomMaterial {
 	}
 	
 	//REGISTRY PATTERN
-	private static HashSet<CustomMaterial> registry;
+	public static HashSet<CustomMaterial> registry;
 	public static void InitRegistry() {
 		if(registry != null) registry.clear();
 		else registry = new HashSet<CustomMaterial>();
 	}
 	
 	public static CustomMaterial ByName(String name) {
-		for(CustomMaterial i : registry) if(i.name == name) return i;
+		if(registry == null) return null;
+		for(CustomMaterial i : registry) if(name.equalsIgnoreCase(i.name)) return i;
 		return null;
 	}
 	
 	public static CustomMaterial ByClass(Class<? extends CustomItem> clazz) {
+		if(registry == null) return null;
 		for(CustomMaterial i : registry) if(i.clazz == clazz) return i;
 		return null;
 	}
 	
 	public static CustomMaterial Register(String name, Class<? extends CustomItem> clazz) {
+		if(registry == null) InitRegistry();
 		if(ByName (name ) != null) throw new IllegalArgumentException("Duplicate name: "+name);
 		if(ByClass(clazz) != null) throw new IllegalArgumentException("Duplicate class: "+clazz.getName());
 		

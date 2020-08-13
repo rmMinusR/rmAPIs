@@ -16,9 +16,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import de.tr7zw.nbtapi.NBTItem;
+import rmMinusR.mc.plugins.apis.debug.DebugItemNamespace;
+import rmMinusR.mc.plugins.apis.debug.DebugUtils;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItem;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItemManager;
-import rmMinusR.mc.plugins.apis.forgelike.TestCustomItem;
+import rmMinusR.mc.plugins.apis.forgelike.CustomMaterial;
 import rmMinusR.mc.plugins.apis.particle.Image;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusionManager;
@@ -61,9 +63,19 @@ public class RmApisPlugin extends JavaPlugin {
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
-			logger.info("Initializing Unitylike");
+			logger.info("Initializing Unitylike ECS");
 			unitylikeEnv = new UnitylikeEnvironmentManager(getConfig().getInt(KEY_ENTITY_LOAD_RADIUS));
 			unitylikeEnv.OnEnable();
+		} catch(Throwable t) { t.printStackTrace(); }
+		
+		try {
+			logger.info("Initializing Forgelike items");
+			CustomMaterial.InitRegistry();
+		} catch(Throwable t) { t.printStackTrace(); }
+		
+		try {
+			logger.info("Registering debug items");
+			DebugItemNamespace.RegisterItems();
 		} catch(Throwable t) { t.printStackTrace(); }
 	}
 	
@@ -145,22 +157,26 @@ public class RmApisPlugin extends JavaPlugin {
 			return true;
 		}
 		
-		if(args[0].equalsIgnoreCase("item-listcache")) {
-			for(CustomItem c : CustomItemManager.cache) unvalidatedSender.sendMessage(c.toString());
-			return true;
-		}
-		
-		if(args[0].equalsIgnoreCase("item-listnbt")) {
-			for(String s : DebugUtils.ToString(new NBTItem(sender.getInventory().getItemInMainHand())).split("\n")) {
-				unvalidatedSender.sendMessage(s);
+		if(args[0].equalsIgnoreCase("item")) {
+			if(args[1].equalsIgnoreCase("cache")) {
+				for(CustomItem c : CustomItemManager.cache) unvalidatedSender.sendMessage(c.toString());
+				return true;
+			} else if(args[1].equalsIgnoreCase("info")) {
+				unvalidatedSender.sendMessage("Item: "+sender.getInventory().getItemInMainHand().getType());
+				unvalidatedSender.sendMessage( DebugUtils.ToString(new NBTItem(sender.getInventory().getItemInMainHand())).split("\n") );
+				return true;
+			} else if(args[1].equalsIgnoreCase("create")) {
+				CustomMaterial mat = CustomMaterial.ByName(args[2]);
+				if(mat != null) {
+					CustomItem.CreateNewBlank(sender.getInventory().getItemInMainHand(), mat.clazz);
+				} else {
+					unvalidatedSender.sendMessage("No item with the name \""+args[2]+"\" found");
+					for(CustomMaterial i : CustomMaterial.registry) unvalidatedSender.sendMessage(i.name);
+				}
+				return true;
 			}
-			return true;
 		}
 		
-		if(args[0].equalsIgnoreCase("item-make")) {
-			CustomItem.CreateNewBlank(sender.getInventory().getItemInMainHand(), TestCustomItem.class);
-			return true;
-		}
 		//END TESTING
 		
 		return false;

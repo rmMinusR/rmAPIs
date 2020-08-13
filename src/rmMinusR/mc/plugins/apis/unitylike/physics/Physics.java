@@ -35,7 +35,7 @@ public final class Physics {
 		Line ray = new Line(origin, direction);
 		
 		for(AbstractCollider c : colliders) {
-			if(c.TryRaycast(ray) != null) return true;
+			if(c.TryRaycast(ray, maxDistance) != null) return true;
 		}
 		
 		return false;
@@ -58,9 +58,11 @@ public final class Physics {
 		
 		System.out.println();
 		for(AbstractCollider c : colliders) {
-			System.out.println("Attempting raycast on "+c);
-			RaycastHit hit = c.TryRaycast(ray);
-			if(hit != null && Vector3.Distance(origin, hit.point) < maxDistance && ray.GetTAt(hit.point) > 0) hits.add(hit);
+			RaycastHit hit = c.TryRaycast(ray, maxDistance);
+			if(hit != null && Vector3.Distance(origin, hit.point) < maxDistance && ray.GetTAt(hit.point) > 0) {
+				if(hit.normal != null) hit.normal = hit.normal.Normalize();
+				hits.add(hit);
+			}
 		}
 		
 		hits.sort(new Comparator<RaycastHit>() {

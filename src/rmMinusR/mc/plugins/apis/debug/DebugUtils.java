@@ -1,7 +1,8 @@
-package rmMinusR.mc.plugins.apis;
+package rmMinusR.mc.plugins.apis.debug;
 
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTType;
+import rmMinusR.mc.plugins.apis.RmApisPlugin;
 
 public class DebugUtils {
 

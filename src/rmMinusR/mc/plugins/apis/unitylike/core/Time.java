@@ -5,8 +5,8 @@ public final class Time {
 	private Time() {} //Prevent instantiation
 	
 	private static long timeStart = 0;
-	public static float time = 0;
-	public static float deltaTime = 0;
+	public static double time = 0;
+	public static double deltaTime = 0;
 	
 	private static float GetSecondsSinceStart() {
 		return (System.currentTimeMillis()-timeStart)/1000f;
@@ -18,20 +18,20 @@ public final class Time {
 	}
 	
 	public static void Update() {
-		float pTime = time;
+		double pTime = time;
 		time = GetSecondsSinceStart();
 		
 		deltaTime = time-pTime;
 	}
 	
-	public static float MaxDeltaTime(float max) { return deltaTime > max ? max : deltaTime; }
+	public static float MaxDeltaTime(float max) { return (float)(deltaTime > max ? max : deltaTime); }
 
 	public static float Since(float when) {
-		return time-when;
+		return (float)(time-when);
 	}
 	
 	public static float Until(float when) {
-		return when-time;
+		return (float)(when-time);
 	}
 	
 }

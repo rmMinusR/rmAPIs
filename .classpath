@@ -9,6 +9,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Robert/Documents/workspace/mcTools/item-nbt-api-plugin-2.4.1.jar"/>
-	<classpathentry kind="lib" path="/PacketWrapper/target/PacketWrapper.jar"/>
+	<classpathentry kind="lib" path="/PacketWrapper/target/PacketWrapper.jar" sourcepath="/PacketWrapper"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -11,8 +11,9 @@ import rmMinusR.mc.plugins.apis.unitylike.physics.BoxCollider;
 public final class BlockCollider extends BoxCollider {
 	public Block ref;
 	
+	@SuppressWarnings("deprecation")
 	public BlockCollider(Block b) {
-		super(new FakeGO(b), Vector3.zero(), Vector3.one());
+		super(new FakeGO(b), Vector3.zero(), Vector3.one(), BoxCollider.getLTW_NoRotation);
 		ref = b;
 	}
 	

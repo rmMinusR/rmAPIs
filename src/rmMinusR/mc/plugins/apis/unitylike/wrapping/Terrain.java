@@ -128,32 +128,26 @@ public class Terrain extends GameObject {
 		
 		//Technically it's a raymarch
 		@Override
-		public RaycastHit TryRaycast(Line _ray) {
+		public RaycastHit TryRaycast(Line _ray, float max_dist) {
 			Line ray = new Line(_ray.origin, _ray.direction.Normalize());
-			System.out.println("Terrain raymarching on "+ray.toString());
 			
 			float step = 1;
 			float t = 0;
-			for(int iter = 0; iter < 32; iter++) {
+			for(int iter = 0; iter < max_dist; iter++) {
 				Vector3 cur_pos = ray.GetByT(t);
 				
-				System.out.println("Iteration "+iter+", D="+t+" pos="+cur_pos+", selection region="+ray.GetByT(t).ToBlockVector3()+"-"+ray.GetByT(t+step).ToBlockVector3());
-				
-				ArrayList<Block> region = SelectRegion(
-						ray.GetByT(t).ToBlockVector3(),
-						ray.GetByT(t+step).ToBlockVector3()
-				);
-				ArrayList<Block> possibleCollisions = SelectByClosestApproach(region, ray);
-				
-				System.out.println("Region["+region.size()+"]:");
-				for(Block b : region) System.out.println(b);
-				System.out.println("Possible collisions["+possibleCollisions.size()+"]:");
-				for(Block b : possibleCollisions) System.out.println(b);
+				ArrayList<Block> possibleCollisions = SelectByClosestApproach(
+							SelectRegion(
+									ray.GetByT(t).ToBlockVector3(),
+									ray.GetByT(t+step).ToBlockVector3()
+							),
+							ray
+						);
 				
 				RaycastHit collision = null;
 				for(Block b : possibleCollisions) {
 					BlockCollider b_coll = new BlockCollider(b);
-					RaycastHit b_hit = b_coll.TryRaycast(ray);
+					RaycastHit b_hit = b_coll.TryRaycast(ray, max_dist);
 					if(b_hit != null) {
 						if(collision == null || _ray.origin.Distance(collision.point) > _ray.origin.Distance(b_hit.point)) {
 							collision = b_hit;
@@ -161,17 +155,8 @@ public class Terrain extends GameObject {
 					}
 				}
 				if(collision != null) return collision;
-				/*
-				ArrayList<RaycastHit> nextBlockBoundaries = NextBlockBoundaries(cur_pos, ray.direction);
 				
-				for(RaycastHit boundary : nextBlockBoundaries) {
-					Block nextBlock = ((BlockCollider)boundary.collider).ref;
-					if(nextBlock != null && !nextBlock.isEmpty()) {
-						System.out.println("Found block! Edge="+boundary.point);
-						boundary.collider = new BlockCollider(nextBlock);
-						return boundary;
-					}
-				}*/
+				if(cur_pos.y < 0 || cur_pos.y > gameObject.world.getMaxHeight()) return null;
 				
 				t += step;
 			}

@@ -6,7 +6,7 @@ import org.bukkit.util.Vector;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 
-public final class Transform extends Component {
+public final class Transform extends Component implements Cloneable {
 	
 	public Matrix matrix;
 	
@@ -70,6 +70,11 @@ public final class Transform extends Component {
 	public Vector3      up() { return matrix.TransformVector(Vector3.     up()); }
 	public Vector3 forward() { return matrix.TransformVector(Vector3.forward()); }
 	
+	@Override
+	public Transform clone() {
+		return new Transform(matrix.clone());
+	}
+	
 	public Vector3 GetPosition() { return new Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]); }
 	public void SetPosition(Vector3 pos) { matrix.m[3][0] = pos.x; matrix.m[3][1] = pos.y; matrix.m[3][2] = pos.z; }
 	
@@ -110,14 +115,14 @@ public final class Transform extends Component {
 				);
 	}
 	
-	@SuppressWarnings("deprecation")
+	@Deprecated //FIXME it no work
 	public void ResetRotation() {
 		matrix.CopyDataFrom(
 					Matrix.Mul( GetRotation().ToMatrix().Inverse(), matrix )
 				);
 	}
 	
-	@SuppressWarnings("deprecation")
+	@Deprecated //FIXME doesn't work until ResetRotation() is patched
 	public void SetRotation(Quaternion q) {
 		matrix.CopyDataFrom(
 					Matrix.Mul( q.ToMatrix(), GetRotation().Inverse().ToMatrix(), matrix )

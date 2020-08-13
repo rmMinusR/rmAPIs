@@ -1,5 +1,7 @@
 package rmMinusR.mc.plugins.apis.unitylike.physics;
 
+import java.util.function.Function;
+
 import org.bukkit.Particle;
 
 import rmMinusR.mc.plugins.apis.particle.AdvancedParticleTemplate;
@@ -13,13 +15,15 @@ import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 public class QuadCollider extends AbstractCollider {
 	
 	private Matrix localToWorld;
-	public QuadCollider(GameObject gameObject, Matrix localToWorld) {
+	private Function<GameObject,Matrix> gameObjectGetLTW;
+	public QuadCollider(GameObject gameObject, Matrix localToWorld, Function<GameObject,Matrix> gameObjectGetLTW) {
 		super(gameObject);
 		this.localToWorld = localToWorld;
+		this.gameObjectGetLTW = gameObjectGetLTW;
 	}
 	
 	private Matrix GetLocalToWorld() {
-		return Matrix.Mul(gameObject.GetTransform().GetLocalToWorldMatrix(), localToWorld);
+		return Matrix.Mul(gameObjectGetLTW.apply(gameObject), localToWorld);
 	}
 	
 	@Override
@@ -40,10 +44,10 @@ public class QuadCollider extends AbstractCollider {
 	}
 
 	@Override
-	public RaycastHit TryRaycast(Line ray) {
+	public RaycastHit TryRaycast(Line ray, float max_dist) {
 		Line local_ray = GetLocalToWorld().Inverse().TransformRay(ray);
 		Vector3 hit_loc = new Plane(Vector3.zero(), Vector3.forward()).GetIntercept(local_ray);
-		if(Mathf.Between(hit_loc.x, -0.5, 0.5) && Mathf.Between(hit_loc.y, -0.5, 0.5)) {
+		if(Mathf.Between(hit_loc.x, -0.5, 0.5) && Mathf.Between(hit_loc.y, -0.5, 0.5) && local_ray.origin.Distance(hit_loc) < max_dist && local_ray.GetTAt(hit_loc) > 0) {
 			RaycastHit out = new RaycastHit();
 			out.point = GetLocalToWorld().TransformPoint(hit_loc);
 			out.normal = GetLocalToWorld().TransformVector(Vector3.forward());
