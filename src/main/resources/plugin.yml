@@ -1,0 +1,13 @@
+api-version: 1.15
+load: POSTWORLD
+depend: [ProtocolLib, NBTAPI, PacketWrapper]
+prefix: rmAPIs
+commands:
+ rmapis-debug:
+  usage: /<command> tag <set:list:clear> [key] [value]
+  description: Debugging
+  permission: rmapis.debug
+permissions:
+ rmapis.debug:
+  description: Debugging RMAPIS
+  default: op
