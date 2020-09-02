@@ -8,6 +8,7 @@ public final class DebugItemNamespace {
 		
 		RodOfRaycasting.Register();
 		TimeflowBand.Register();
+		WispWand.Register();
 		
 	}
 	

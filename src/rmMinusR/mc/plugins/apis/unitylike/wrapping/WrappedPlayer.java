@@ -5,21 +5,20 @@ import java.io.IOException;
 
 import org.bukkit.entity.Player;
 
-import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTListCompound;
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItemManager;
+import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializable;
-import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializableExt;
 import rmMinusR.mc.plugins.apis.unitylike.core.JavaBehaviour;
+import rmMinusR.mc.plugins.apis.unitylike.core.Scene;
+import rmMinusR.mc.plugins.apis.unitylike.core.SerializationFactory;
+import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
 
 public class WrappedPlayer extends WrappedLivingEntity {
-	
-	private static final String KEY_CLASS = "type";
-	private static final String KEY_DATA  = "data";
 	
 	public Player player;
 	
@@ -29,6 +28,20 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		
 		AddComponent(new PlayerDataHelper(this));
 		AddComponent(new CustomItemManager(this));
+	}
+	
+	public static WrappedPlayer GetOrNew(Player ent) {
+		//Try to find existing instance
+		WrappedPlayer p = Get(ent);
+		if(p != null) return p;
+		
+		//None exists, instantiate
+		else return UnitylikeEnvironment.GetInstance().Instantiate(new WrappedPlayer(ent));
+	}
+	
+	public static WrappedPlayer Get(Player ent) {
+		for(WrappedPlayer i : UnitylikeEnvironment.GetInstance().FindObjectsOfType(WrappedPlayer.class)) if(i.entity.equals(ent)) return i;
+		return null;
 	}
 	
 	protected class PlayerDataHelper extends JavaBehaviour {
@@ -69,7 +82,7 @@ public class WrappedPlayer extends WrappedLivingEntity {
 	}
 	
 	public static File GetPersistentSaveLoc(Player player) throws IOException {
-		File out = new File(RmApisPlugin.INSTANCE.unitylikeEnv.getDataFolder(), player.getUniqueId().toString()+".dat");
+		File out = new File(Scene.GetOrNew(player.getWorld()).getDataFolder(), player.getUniqueId().toString()+".dat");
 		
 		return out;
 	}
@@ -85,10 +98,7 @@ public class WrappedPlayer extends WrappedLivingEntity {
 			if(c instanceof IPersistentSerializable) {
 				System.out.println("Writing "+c.getClass().getName()+"...");
 				IPersistentSerializable s = (IPersistentSerializable)c;
-				NBTCompound cnbt = nbtComponents.addCompound();
-				
-				cnbt.setString(KEY_CLASS, s.getClass().getName());
-				s.DataToPersistent(cnbt.addCompound(KEY_DATA));
+				SerializationFactory.WriteToNBT(s, nbtComponents.addCompound());
 			}
 		}
 		
@@ -96,7 +106,6 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		nbtFile.save();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void LoadPersistent() throws IOException {
 		System.out.println("Reading player data: "+player.getDisplayName());
 		NBTFile nbtFile = new NBTFile(GetPersistentSaveLoc(player));
@@ -105,26 +114,15 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		System.out.println("Found "+nbtComponents.size()+" component entries");
 		
 		for(NBTListCompound nc : nbtComponents) {
-			
-			String r_class = nc.getString(KEY_CLASS);
-			NBTCompound r_data = nc.getCompound(KEY_DATA);
-			
-			System.out.println("Reading "+r_class+"...");
-			
-			Class<? extends IPersistentSerializable> c = null;
-			try {
-				c = (Class<? extends IPersistentSerializable>) Class.forName(r_class);
-			} catch(ClassNotFoundException e) { RmApisPlugin.INSTANCE.logger.warning("Failed to find class "+r_class+" - did you remove a plugin?"); continue; }
-			
-			//c should never be null here
+			System.out.println("Reading "+nc.getName()+"...");
 			
 			try {
 				//Attempt to get populated serializable, and push to components
 				//FIXME this may cause multiple calls to Awake() and OnEnable()
-				Component deser = (Component) IPersistentSerializableExt.GetFromNBT(this, r_data, c);
-				AddComponent(deser, false);
+				Component deser = SerializationFactory.ReadFromNBTAs(nc, Component.class);
+				AddComponent(deser);
 			} catch (Exception e) {
-				RmApisPlugin.INSTANCE.logger.warning("Failed to load data for Unitylike Component \""+r_class+"\" for player "+player.getDisplayName());
+				Debug.LogWarning("Failed to load data for Unitylike Component \""+nc.getName()+"\" for player "+player.getDisplayName());
 				e.printStackTrace();
 			}
 		}

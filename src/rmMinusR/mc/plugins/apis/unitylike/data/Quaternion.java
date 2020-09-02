@@ -15,6 +15,34 @@ public final class Quaternion implements Cloneable {
 		this((float) w, (float) x, (float) y, (float) z);
 	}
 	
+	public Vector3 forward() {
+		//https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/1273785
+		return new Vector3(
+					2 * (x*z + w*y),
+					2 * (y*z - w*x),
+					1 - 2 * (x*x + y*y)
+				);
+	}
+	
+	public Vector3 up() {
+		//https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/1273785
+		return new Vector3(
+					2 * (x*y - w*z),
+					1 - 2 * (x*x + z*z),
+					2 * (y*z + w*x)
+				);
+	}
+	
+	public Vector3 right() { return left().Mul(-1); }
+	private Vector3 left() {
+		//https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/1273785
+		return new Vector3(
+					1 - 2 * (y*y + z*z),
+					2 * (x*y + w*z),
+					2 * (x*z - w*y)
+				);
+	}
+	
 	@Override
 	protected Quaternion clone() {
 		return new Quaternion(w, x, y, z);

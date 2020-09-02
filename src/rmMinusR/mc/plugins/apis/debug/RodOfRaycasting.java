@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tr7zw.nbtapi.NBTCompound;
-import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItem;
 import rmMinusR.mc.plugins.apis.forgelike.CustomMaterial;
 import rmMinusR.mc.plugins.apis.particle.AdvancedParticleTemplate;
@@ -28,7 +27,7 @@ public class RodOfRaycasting extends CustomItem {
 	
 	@Override
 	public boolean OnRightClick(LivingEntity holder) {
-		WrappedLivingEntity wrappedHolder = (WrappedLivingEntity) RmApisPlugin.INSTANCE.unitylikeEnv.Wrap(holder);
+		WrappedLivingEntity wrappedHolder = WrappedLivingEntity.GetOrNew(holder);
 		Vector3 pos = new Vector3(holder.getEyeLocation());
 		Vector3 look_vec = wrappedHolder.GetTransform().forward();
 		
@@ -56,7 +55,7 @@ public class RodOfRaycasting extends CustomItem {
 	
 	@Override
 	public boolean OnLeftClick(LivingEntity holder) {
-		WrappedLivingEntity wrappedHolder = (WrappedLivingEntity) RmApisPlugin.INSTANCE.unitylikeEnv.Wrap(holder);
+		WrappedLivingEntity wrappedHolder = WrappedLivingEntity.GetOrNew(holder);
 		Vector3 pos = new Vector3(holder.getEyeLocation());
 		Vector3 look_vec = wrappedHolder.GetTransform().forward();
 		

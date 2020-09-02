@@ -49,4 +49,25 @@ public final class Mathf {
 
 	public static float Cos(float x) { return (float) Math.cos(x); }
 	public static float Sin(float x) { return (float) Math.sin(x); }
+	
+	public static <T extends Number> T Min(Iterable<T> ns) {
+		T least = null;
+		
+		for(T n : ns) if(least == null || ( n.doubleValue() < least.doubleValue() && n != null )) least = n;
+		
+		return least;
+	}
+	
+	public static <T extends Number> T Max(Iterable<T> ns) {
+		T most = null;
+		
+		for(T n : ns) if(most == null || ( n.doubleValue() < most.doubleValue() && n != null )) most = n;
+		
+		return most;
+	}
+
+	public static float Sq(float f) { return f * f; }
+	public static float Cb(float f) { return f * f * f; }
+	public static float Sqrt(float f) { return (float) Math.sqrt(f); }
+	public static float Cbrt(float f) { return (float) Math.pow(f, 1/3f); }
 }

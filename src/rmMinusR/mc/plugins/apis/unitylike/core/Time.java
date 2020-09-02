@@ -26,11 +26,11 @@ public final class Time {
 	
 	public static float MaxDeltaTime(float max) { return (float)(deltaTime > max ? max : deltaTime); }
 
-	public static float Since(float when) {
+	public static float Since(double when) {
 		return (float)(time-when);
 	}
 	
-	public static float Until(float when) {
+	public static float Until(double when) {
 		return (float)(when-time);
 	}
 	

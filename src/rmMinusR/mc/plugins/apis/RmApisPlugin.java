@@ -27,7 +27,8 @@ import rmMinusR.mc.plugins.apis.simpleillusion.IllusionManager;
 import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
-import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironmentManager;
+import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
+import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedPlayer;
 
 public class RmApisPlugin extends JavaPlugin {
 	
@@ -35,7 +36,6 @@ public class RmApisPlugin extends JavaPlugin {
 	
 	public Logger logger;
 	public IllusionManager illusionManager;
-	public UnitylikeEnvironmentManager unitylikeEnv;
 	
 	public static RmApisPlugin INSTANCE;
 	
@@ -64,8 +64,7 @@ public class RmApisPlugin extends JavaPlugin {
 		
 		try {
 			logger.info("Initializing Unitylike ECS");
-			unitylikeEnv = new UnitylikeEnvironmentManager(getConfig().getInt(KEY_ENTITY_LOAD_RADIUS));
-			unitylikeEnv.OnEnable();
+			UnitylikeEnvironment._OnEnable();
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
@@ -94,11 +93,8 @@ public class RmApisPlugin extends JavaPlugin {
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
-			if(unitylikeEnv != null) {
-				logger.info("Disabling Unitylike");
-				unitylikeEnv.OnDisable();
-				unitylikeEnv = null;
-			}
+			logger.info("Disabling Unitylike");
+			UnitylikeEnvironment._OnDisable();
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		Bukkit.getScheduler().cancelTasks(this);
@@ -148,12 +144,12 @@ public class RmApisPlugin extends JavaPlugin {
 		}
 		
 		if(args[0].equalsIgnoreCase("unitylike-components")) {
-			for(Component i : unitylikeEnv.Wrap(sender).GetComponents()) unvalidatedSender.sendMessage(i.toString());
+			for(Component i : WrappedPlayer.GetOrNew(sender).GetComponents()) unvalidatedSender.sendMessage(i.toString());
 			return true;
 		}
 		
 		if(args[0].equalsIgnoreCase("unitylike-objects")) {
-			for(GameObject i : unitylikeEnv.GetAllObjects()) unvalidatedSender.sendMessage(i.toString());
+			for(GameObject i : UnitylikeEnvironment.GetInstance().GetGameObjects()) unvalidatedSender.sendMessage(i.toString());
 			return true;
 		}
 		
