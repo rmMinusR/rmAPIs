@@ -14,7 +14,6 @@ import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializable;
 import rmMinusR.mc.plugins.apis.unitylike.core.JavaBehaviour;
-import rmMinusR.mc.plugins.apis.unitylike.core.Scene;
 import rmMinusR.mc.plugins.apis.unitylike.core.SerializationFactory;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
 
@@ -81,9 +80,15 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		
 	}
 	
+	public static File getDataFolder() {
+		File out = new File(UnitylikeEnvironment.GetInstance().getDataFolder(), "playerdata");
+		out.mkdirs();
+		return out;
+	}
+	
 	public static File GetPersistentSaveLoc(Player player) throws IOException {
-		File out = new File(Scene.GetOrNew(player.getWorld()).getDataFolder(), player.getUniqueId().toString()+".dat");
-		
+		File out = new File(getDataFolder(), player.getUniqueId().toString()+".dat");
+		if(!out.exists()) out.createNewFile();
 		return out;
 	}
 	

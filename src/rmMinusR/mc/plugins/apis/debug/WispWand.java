@@ -116,7 +116,7 @@ public class WispWand extends CustomItem {
 			protected void Render() {
 				Wisp w = (Wisp)owner;
 				ParticleGraphics.surfCube(
-						w.world,
+						w.scene.ref,
 						w.GetTransform().GetPosition().Add(Vector3.one().Mul(-0.2f)).ToBukkit(),
 						w.GetTransform().GetPosition().Add(Vector3.one().Mul( 0.2f)).ToBukkit(),
 						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(255, 127, 0),

@@ -146,6 +146,8 @@ public class Scene implements Listener, IGameObjectHolder {
 				} catch(IOException e) { Debug.LogError("Could not write artifact "+i); }
 			}
 		} finally {
+			if(getChunkFolder(c).listFiles().length == 0) getChunkFolder(c).delete();
+			
 			if(doUnload) for(GameObject o : svq) gameObjects.remove(o); //Silent destroy
 		}
 	}
@@ -231,7 +233,7 @@ public class Scene implements Listener, IGameObjectHolder {
 	}
 
 	public File getDataFolder() {
-		return new File(RmApisPlugin.INSTANCE.getDataFolder(), ref.getName());
+		return new File(UnitylikeEnvironment.GetInstance().getDataFolder(), ref.getName());
 	}
 	
 	public File getChunkFolder(Chunk c) {

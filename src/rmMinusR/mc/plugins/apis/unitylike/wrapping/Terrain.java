@@ -33,7 +33,7 @@ public class Terrain extends GameObject {
 		
 		@Override
 		public String toString() {
-			return "Terrain.Collider("+gameObject.world.getName()+")";
+			return "Terrain.Collider("+gameObject.scene.ref.getName()+")";
 		}
 		
 		@Override
@@ -51,8 +51,8 @@ public class Terrain extends GameObject {
 		}
 		
 		public boolean IsWithin(BlockVector3 bv) {
-			if(!gameObject.world.isChunkGenerated(bv.GetChunkX(), bv.GetChunkZ())) return false;
-			return !gameObject.world.getBlockAt((int)bv.x, (int)bv.y, (int)bv.z).isEmpty();
+			if(!gameObject.scene.ref.isChunkGenerated(bv.GetChunkX(), bv.GetChunkZ())) return false;
+			return !gameObject.scene.ref.getBlockAt((int)bv.x, (int)bv.y, (int)bv.z).isEmpty();
 		}
 		
 		private ArrayList<Block> CubeSurf(BlockVector3 center, int radius) {
@@ -63,7 +63,7 @@ public class Terrain extends GameObject {
 				|| y == -radius || y == radius
 				|| z == -radius || z == radius) {
 					BlockVector3 pos = new BlockVector3(x+center.x, y+center.y, z+center.z);
-					Block b = pos.Fetch(gameObject.world);
+					Block b = pos.Fetch(gameObject.scene.ref);
 					out.add(b);
 				}
 				
@@ -79,7 +79,7 @@ public class Terrain extends GameObject {
 			ArrayList<Block> region = new ArrayList<Block>();
 			for(long x = lo.x; x <= hi.x; x++) for(long y = lo.y; y <= hi.y; y++) for(long z = lo.z; z <= hi.z; z++) {
 				BlockVector3 i = new BlockVector3(x, y, z);
-				Block b = i.Fetch(gameObject.world);
+				Block b = i.Fetch(gameObject.scene.ref);
 				if(b != null && !b.isEmpty()) region.add(b);
 			}
 			
@@ -156,7 +156,7 @@ public class Terrain extends GameObject {
 				}
 				if(collision != null) return collision;
 				
-				if(cur_pos.y < 0 || cur_pos.y > gameObject.world.getMaxHeight()) return null;
+				if(cur_pos.y < 0 || cur_pos.y > gameObject.scene.ref.getMaxHeight()) return null;
 				
 				t += step;
 			}

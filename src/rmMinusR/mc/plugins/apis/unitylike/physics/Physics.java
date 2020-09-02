@@ -28,7 +28,7 @@ public final class Physics {
 	public static RaycastHit[] RaycastAll(World world, Vector3 origin, Vector3 direction, Function<AbstractCollider, Boolean> selector)	{ return RaycastAll(world, origin, direction, defaultMaxDistance, selector ); }
 	public static RaycastHit[] RaycastAll(World world, Vector3 origin, Vector3 direction, float maxDistance, Function<AbstractCollider, Boolean> selector) {
 		HashSet<AbstractCollider> colliders = new HashSet<AbstractCollider>();
-		for(UnitylikeObject o : Scene.GetOrNew(world).FindObjectsOfType(AbstractCollider.class)) if(((AbstractCollider)o).gameObject.world == world && selector.apply((AbstractCollider) o)) colliders.add((AbstractCollider) o);
+		for(UnitylikeObject o : Scene.GetOrNew(world).FindObjectsOfType(AbstractCollider.class)) if(((AbstractCollider)o).gameObject.scene.ref == world && selector.apply((AbstractCollider) o)) colliders.add((AbstractCollider) o);
 		return RaycastAll(origin, direction, maxDistance, colliders);
 	}
 	public static RaycastHit[] RaycastAll(final Vector3 origin, final Vector3 direction, float maxDistance, Collection<? extends AbstractCollider> colliders) {

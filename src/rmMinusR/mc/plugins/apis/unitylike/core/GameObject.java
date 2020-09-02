@@ -16,12 +16,14 @@ import rmMinusR.mc.plugins.apis.unitylike.physics.AbstractCollider;
 public class GameObject extends UnitylikeObject implements IComponentHolder {
 	
 	private Set<Component> components;
-	public World world;
+	public Scene scene;
 	
-	public GameObject(World world) {
+	public GameObject(World w) { this(Scene.GetOrNew(w)); }
+	
+	public GameObject(Scene scene) {
 		components = new HashSet<Component>();
 		try { AddComponent(new Transform()); } catch(IllegalArgumentException e) {}
-		this.world = world;
+		this.scene = scene;
 	}
 	
 	//Components quickref

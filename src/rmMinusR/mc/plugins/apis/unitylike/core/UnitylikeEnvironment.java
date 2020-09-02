@@ -1,5 +1,6 @@
 package rmMinusR.mc.plugins.apis.unitylike.core;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -74,6 +75,10 @@ public final class UnitylikeEnvironment implements Runnable, Listener, IGameObje
 	
 	@EventHandler
 	public void OnWorldUnload(WorldUnloadEvent w) { if(Scene.IsLoaded(w.getWorld())) Scene.GetOrNew(w.getWorld()).Save(); }
+	
+	public File getDataFolder() {
+		return new File(RmApisPlugin.INSTANCE.getDataFolder(), "objects");
+	}
 	
 	//Player leave/join
 	

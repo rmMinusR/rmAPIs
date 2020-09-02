@@ -58,7 +58,7 @@ public class QuadCollider extends AbstractCollider {
 	
 	@Override
 	public void DebugRender() {
-		ParticleGraphics.wireQuad(gameObject.world,
+		ParticleGraphics.wireQuad(gameObject.scene.ref,
 					GetLocalToWorld().TransformPoint(new Vector3( 0.5,  0.5, 0)).ToBukkit(),
 					GetLocalToWorld().TransformPoint(new Vector3(-0.5,  0.5, 0)).ToBukkit(),
 					GetLocalToWorld().TransformPoint(new Vector3(-0.5, -0.5, 0)).ToBukkit(),
