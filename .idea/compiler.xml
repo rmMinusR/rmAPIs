@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold-preprocessor/2020.1.25/b052f1275147fc85fefaf6f903a88a3f0bbad757/manifold-preprocessor-2020.1.25.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold-ext/2020.1.25/7535ba71f8586bceec8a5b0ef49c54e5354bd258/manifold-ext-2020.1.25.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold/2020.1.25/991dafccad2d6e533956d6c45f9bf86b468cfabf/manifold-2020.1.25.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold-ext-rt/2020.1.25/d06b322809178c1d1c555f298339b0694a646a12/manifold-ext-rt-2020.1.25.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold-rt/2020.1.25/bac10db489fc701aa37248b2fd78aac41d448906/manifold-rt-2020.1.25.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/systems.manifold/manifold-util/2020.1.25/e0ee5ed76d3ef50655e812c6000deb121d701cdc/manifold-util-2020.1.25.jar" />
+        </processorPath>
+        <module name="rmBukkitAPIs.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.8" />
+  </component>
+</project>
