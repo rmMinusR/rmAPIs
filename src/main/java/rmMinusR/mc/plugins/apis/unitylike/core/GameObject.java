@@ -15,14 +15,14 @@ import rmMinusR.mc.plugins.apis.unitylike.physics.AbstractCollider;
 
 public class GameObject extends UnitylikeObject implements IComponentHolder {
 	
-	private Set<Component> components;
+	private final Set<Component> components;
 	public Scene scene;
 	
 	public GameObject(World w) { this(Scene.GetOrNew(w)); }
 	
 	public GameObject(Scene scene) {
 		components = new HashSet<Component>();
-		try { AddComponent(new Transform()); } catch(IllegalArgumentException e) {}
+		try { AddComponent(new Transform()); } catch(IllegalArgumentException ignored) {}
 		this.scene = scene;
 	}
 	
@@ -69,7 +69,7 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 	//Ticker methods
 	
 	@SerializedName(value="@__isStarted")
-	@Expose(serialize=true, deserialize=true)
+	@Expose
 	private boolean _isStarted = false;
 	public void Start() {}
 	public void Update() {}
