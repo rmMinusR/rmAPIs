@@ -53,7 +53,15 @@ public final class Vector3 implements Cloneable {
 	public String toString() {
 		return String.format("(%f, %f, %f)", x, y, z);
 	}
-	
+
+	//Make Manifold happy
+	public Vector3 plus(Vector3 other) { return Add(other); }
+	public Vector3 minus(Vector3 other) { return Sub(other); }
+	public Vector3 times(float other) { return Mul(other); }
+	public Vector3 times(Vector3 other) { return MulPiecewise(other); }
+	public Vector3 div(float other) { return Mul(1/other); }
+	public Vector3 unaryMinus() { return Mul(-1); }
+
 	//Basic
 	public Vector3 AddInPlace(Vector3 other) { this.x += other.x; this.y += other.y; this.z += other.z; return this; }
 	public Vector3 Add(Vector3 other) { return Add(this, other); }
@@ -64,7 +72,7 @@ public final class Vector3 implements Cloneable {
 			return new Vector3(a.x+etc[0].x, a.y+etc[0].y, a.z+etc[0].z);
 		} else {
 			Vector3[] etc2 = new Vector3[etc.length-1];
-			for(int i = 0; i < etc2.length; i++) etc2[i] = etc[i+1];
+			System.arraycopy(etc, 1, etc2, 0, etc2.length);
 			return Add(a, Add(etc[0], etc2));
 		}
 	}
@@ -74,7 +82,7 @@ public final class Vector3 implements Cloneable {
 	
 	public Vector3 Mul(float scalar) { return Mul(this, scalar); }
 	public static Vector3 Mul(Vector3 v, float s) { return new Vector3(v.x*s, v.y*s, v.z*s); }
-	
+
 	public Vector3 AlignTo(Vector3 other) {
 		Vector3 inv = Mul(-1);
 		return (this.Distance(other) <= inv.Distance(other))

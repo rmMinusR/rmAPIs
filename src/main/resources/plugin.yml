@@ -1,7 +1,9 @@
 api-version: 1.15
 load: POSTWORLD
 depend: [ProtocolLib, NBTAPI, PacketWrapper]
-prefix: rmAPIs
+name: rmAPIs
+main: rmMinusR.mc.plugins.apis.RmApisPlugin
+version: 0.5b build 11
 commands:
  rmapis-debug:
   usage: /<command> tag <set:list:clear> [key] [value]

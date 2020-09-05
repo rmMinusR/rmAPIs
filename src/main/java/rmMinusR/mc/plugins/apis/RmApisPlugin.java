@@ -28,6 +28,7 @@ import rmMinusR.mc.plugins.apis.simpleillusion.IllusoryOverlay;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
+import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedPlayer;
 
 public class RmApisPlugin extends JavaPlugin {
@@ -42,7 +43,7 @@ public class RmApisPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		INSTANCE = this;
-		
+
 		try {
 			FileConfiguration config = getConfig();
 

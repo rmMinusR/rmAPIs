@@ -12,6 +12,10 @@ repositories {
 configurations {
 	//Manifold: give tests access to compileOnly dependencies
     testImplementation.extendsFrom compileOnly
+
+    //Dependency shading
+    shade
+    compile.extendsFrom shade
 }
 
 dependencies {
@@ -19,7 +23,7 @@ dependencies {
 	implementation files('bukkit_libs/PacketWrapper.jar')
 	implementation files('bukkit_libs/ProtocolLib.jar')
 	implementation files('bukkit_libs/spigot-api-1.15.2-R0.1-SNAPSHOT-shaded.jar')
-	
+
 	//Manifold-core boilerplate
     testImplementation 'junit:junit:4.12'
 	compileOnly 'systems.manifold:manifold:2020.1.25'
@@ -34,6 +38,19 @@ dependencies {
     compileOnly 'systems.manifold:manifold-ext:2020.1.25'
     implementation 'systems.manifold:manifold-ext-rt:2020.1.25'
     annotationProcessor group: 'systems.manifold', name: 'manifold-ext', version: '2020.1.25'
+
+    //Shading
+    shade 'systems.manifold:manifold-rt:2020.1.25'
+    shade 'systems.manifold:manifold-ext-rt:2020.1.25'
+}
+
+//Shading
+jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
 }
 
 //Manifold compiler linkup
@@ -52,10 +69,27 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8 &&
 
 //Stuff to streamline Bukkit development
 
-processResources.doFirst {
-	//update config files
+//Incremental build number
+task incrementBuildNumber(type:Exec) {
+    doFirst {
+        project.logger.lifecycle("Incrementing build number of config.yml")
+    }
+
+    workingDir('.')
+    commandLine('python', 'updateYMLs.py')
+}
+task copyPluginYML(type:Copy) {
+    from file('src/main/resources/plugin.yml')
+    into file('bin/main/')
 }
 
-build.doLast {
-	//copy plugin jar to server
+processResources.dependsOn(incrementBuildNumber, copyPluginYML)
+
+//Copy plugin JAR to server/plugins folder
+task copyPlugin(type:Copy) {
+    from file('build/libs/rmBukkitAPIs.jar')
+    into file('D:\\_Data\\mcmds\\serverplugins\\server\\plugins')
 }
+
+copyPlugin.dependsOn(jar)
+build.dependsOn(copyPlugin)
