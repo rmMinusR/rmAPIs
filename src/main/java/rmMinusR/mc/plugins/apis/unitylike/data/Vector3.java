@@ -1,7 +1,10 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
+import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+import static rmMinusR.mc.plugins.apis.unitylike.data.Mathf.*;
 
 public final class Vector3 implements Cloneable {
 	
@@ -34,8 +37,8 @@ public final class Vector3 implements Cloneable {
 		this.y = y;
 		this.z = z;
 	}
-	
-	//Data IO
+
+    //Data IO
 	@Override
 	public Vector3 clone() {
 		return new Vector3(x, y, z);
@@ -44,7 +47,9 @@ public final class Vector3 implements Cloneable {
 	public Vector ToBukkit() {
 		return new Vector(x, y, z);
 	}
-	
+
+	public Vector3F ToComphenix() { return new Vector3F(x, y, z); }
+
 	public BlockVector3 ToBlockVector3() {
 		return new BlockVector3(this);
 	}
@@ -97,7 +102,9 @@ public final class Vector3 implements Cloneable {
 	
 	public float Distance(Vector3 other) { return Distance(this, other); }
 	public static float Distance(Vector3 a, Vector3 b) { return Sub(a, b).GetMagnitude(); }
-	
+
+	public static float AxialDistance(Vector3 a, Vector3 b) { Vector3 c = a-b; return Max( Abs(c.x), Abs(c.y), Abs(c.z) ); }
+
 	public Vector3 Proj(Vector3 other) { return other.WithMagnitude( this.Dot(other)/this.GetMagnitude()/other.GetMagnitude() ); }
 
 	//Trigonometry
@@ -123,5 +130,4 @@ public final class Vector3 implements Cloneable {
 	}
 	
 	public Vector3 MulPiecewise(Vector3 o) { return new Vector3(x*o.x, y*o.y, z*o.z); }
-	
 }

@@ -1,9 +1,16 @@
 package rmMinusR.mc.plugins.apis.debug;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -12,10 +19,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tr7zw.nbtapi.NBTCompound;
+import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.armorstand.VirtualFloatingHead;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItem;
 import rmMinusR.mc.plugins.apis.forgelike.CustomMaterial;
 import rmMinusR.mc.plugins.apis.particle.AdvancedParticleTemplate;
 import rmMinusR.mc.plugins.apis.particle.ParticleGraphics;
+import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializable;
 import rmMinusR.mc.plugins.apis.unitylike.core.IRenderable;
@@ -34,11 +44,47 @@ public class WispWand extends CustomItem {
 	public WispWand(ItemStack ref, NBTCompound data) {
 		super(ref, data);
 	}
-	
+
+	private ASPoseWatcher watcher = null;
+	@Override
+	public boolean OnLeftClick(LivingEntity holder) {
+		if(watcher == null) {
+			holder.sendMessage("Watching EntityMetadata packets...");
+			watcher = new ASPoseWatcher();
+			ProtocolLibrary.getProtocolManager().addPacketListener(watcher);
+		}
+
+		return false;
+	}
+
+	private static final class ASPoseWatcher extends PacketAdapter {
+
+		public ASPoseWatcher() {
+			super(RmApisPlugin.INSTANCE, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA);
+		}
+
+		@Override
+		public void onPacketSending(PacketEvent event) {
+			WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event.getPacket());
+
+			Debug.Log("EID: "+packet.getEntityID());
+			List<WrappedWatchableObject> sorted = new ArrayList<WrappedWatchableObject>(packet.getMetadata());
+			sorted.sort(Comparator.comparingInt(WrappedWatchableObject::getIndex));
+			for(WrappedWatchableObject o : sorted) {
+				if(o.getValue() instanceof Vector3F) {
+					Vector3F v = (Vector3F) o.getValue();
+					Debug.Log(o.getIndex()+": Vector3F:{"+v.getX()+","+v.getY()+","+v.getZ()+"}");
+				}
+				else Debug.Log(o.getIndex()+": "+o.getValue().getClass()+" "+o.getValue());
+			}
+			Debug.Log("============");
+		}
+	}
+
 	@Override
 	public boolean OnRightClick(LivingEntity holder) {
 		Transform tf_holder = WrappedLivingEntity.GetOrNew(holder).GetTransform();
-		Vector3 spawnloc = tf_holder.GetPosition().Add(tf_holder.forward().Mul(4));
+		Vector3 spawnloc = tf_holder.GetPosition() + tf_holder.forward()*4; //FIXME doesn't actually work
 		Scene s = Scene.GetOrNew(holder.getWorld());
 		s.Instantiate(new Wisp(holder.getWorld(), spawnloc));
 		
@@ -92,12 +138,16 @@ public class WispWand extends CustomItem {
 			super.PhysicsUpdate();
 		}
 
+		private VirtualFloatingHead _renderer;
 		@Override
 		public Collection<RenderDelegate> Render() {
-			Set<RenderDelegate> out = new HashSet<RenderDelegate>();
-			
-			out.add(new WispRenderer(this));
-			
+			if(_renderer == null) {
+				_renderer = new VirtualFloatingHead(this, GetComponent(Transform.class));
+				_renderer.SetItem(new ItemStack(Material.DIAMOND_HELMET, 1));
+			}
+
+			Set<RenderDelegate> out = new HashSet<RenderDelegate>(1);
+			out.add(_renderer);
 			return out;
 		}
 		
@@ -117,8 +167,8 @@ public class WispWand extends CustomItem {
 				Wisp w = (Wisp)owner;
 				ParticleGraphics.surfCube(
 						w.scene.ref,
-						w.GetTransform().GetPosition().Add(Vector3.one().Mul(-0.2f)).ToBukkit(),
-						w.GetTransform().GetPosition().Add(Vector3.one().Mul( 0.2f)).ToBukkit(),
+						(w.GetTransform().GetPosition() + Vector3.one() * -0.2f).ToBukkit(),
+						(w.GetTransform().GetPosition() + Vector3.one() *  0.2f).ToBukkit(),
 						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(255, 127, 0),
 						0.07f);
 			}

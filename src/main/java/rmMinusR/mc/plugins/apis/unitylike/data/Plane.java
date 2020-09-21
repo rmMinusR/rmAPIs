@@ -26,7 +26,7 @@ public final class Plane {
 	}
 	
 	public Plane(Vector3 a, Vector3 b, Vector3 c) {
-		this(a, Vector3.Cross(a.Sub(b), a.Sub(c)));
+		this(a, Vector3.Cross(a-b, a-c));
 	}
 	
 	public Vector3 GetIntercept(Line line) {

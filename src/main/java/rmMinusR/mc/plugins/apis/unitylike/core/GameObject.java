@@ -80,10 +80,12 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 				Start();
 			} catch(Throwable t) { Debug.Log("Error calling Start() on "+this); t.printStackTrace(); }
 		}
-		
+
 		try {
 			Update();
 		} catch(Throwable t) { Debug.Log("Error calling Update() on "+this); t.printStackTrace(); }
+
+		for(Component c : GetComponents()) c._Update();
 	}
 	
 	public void PhysicsUpdate() {}
@@ -91,6 +93,8 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 		try {
 			PhysicsUpdate();
 		} catch(Throwable t) { Debug.Log("Error calling PhysicsUpdate() on "+this); t.printStackTrace(); }
+
+		for(Component c : GetComponents()) c._PhysicsUpdate();
 	}
 	
 }

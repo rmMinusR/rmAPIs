@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItem.Context;
 import rmMinusR.mc.plugins.apis.guichest.InventoryExt;
+import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.JavaBehaviour;
 import rmMinusR.mc.plugins.apis.unitylike.core.Time;
 import rmMinusR.mc.plugins.apis.unitylike.data.Mathf;
@@ -168,7 +169,6 @@ public class CustomItemManager extends JavaBehaviour implements Listener {
 	@Override
 	public void Update() {
 		LivingEntity ent = ((WrappedLivingEntity)gameObject).livingEntity;
-		
 		if(ent instanceof Player) {
 			Player p = (Player) ent;
 			for(ItemStack i : p.getInventory()) if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.Detect(i, p.getInventory()), p);
@@ -177,7 +177,8 @@ public class CustomItemManager extends JavaBehaviour implements Listener {
 			{ ItemStack i = ent.getEquipment().getChestplate(); if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.ByPacketSlotID(Context.ARMOR_BODY_ID, ent), ent); }
 			{ ItemStack i = ent.getEquipment().getLeggings();   if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.ByPacketSlotID(Context.ARMOR_LEGS_ID, ent), ent); }
 			{ ItemStack i = ent.getEquipment().getBoots();      if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.ByPacketSlotID(Context.ARMOR_FEET_ID, ent), ent); }
-			
+
+			//FIXME create and use Context.MAIN_HAND instead
 			{ ItemStack i = ent.getEquipment().getItemInMainHand(); if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.ByPacketSlotID(Context.ARMOR_FEET_ID, ent), ent); }
 			{ ItemStack i = ent.getEquipment().getItemInOffHand();  if(CustomItem.IsCustomItem(i)) GetOrInstantiate(i).OnTick(Context.ByPacketSlotID(Context.ARMOR_FEET_ID, ent), ent); }
 		}

@@ -102,7 +102,7 @@ public final class Matrix implements Cloneable {
 	
 	//Data IO
 	@Override
-	protected Matrix clone() {
+	public Matrix clone() {
 		Matrix out = new Matrix(size);
 		for(int i = 0; i < size; i++) for(int j = 0; j < size; j++) out.m[i][j] = m[i][j];
 		return out;
@@ -291,7 +291,7 @@ public final class Matrix implements Cloneable {
 		} else {
 			//Recurse
 			float sum = 0;
-			for(int i = 0; i < size; i++) sum += DropXY(0, i).GetDeterminant() * (i%2==0 ? 1 : -1);
+			for(int i = 0; i < size; i++) sum += DropXY(i, 0).GetDeterminant() * (i%2==0 ? 1 : -1);
 			return sum;
 		}
 	}

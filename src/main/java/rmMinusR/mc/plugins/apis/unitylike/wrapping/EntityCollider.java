@@ -10,7 +10,7 @@ public class EntityCollider extends BoxCollider {
 				wrappedEntity,
 				new Vector3(
 						0,
-						wrappedEntity.entity.getHeight()/2, //Minecraft entites' anchor is at their feet
+						wrappedEntity.entity.getHeight()/2, //Minecraft entities' anchor is at their feet
 						0
 					),
 				new Vector3(
@@ -21,7 +21,5 @@ public class EntityCollider extends BoxCollider {
 				BoxCollider.getLTW_YawOnly
 			);
 	}
-	
-	
-	
+
 }

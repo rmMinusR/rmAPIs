@@ -78,7 +78,7 @@ public class RodOfRaycasting extends CustomItem {
 	public ItemStack GetRenderType() {
 		ItemStack is = new ItemStack(Material.BLAZE_ROD);
 		ItemMeta im = is.getItemMeta();
-		im.setLocalizedName(DebugItemNamespace.Localize(ID));
+		im.setLocalizedName(DebugItemNamespace.LocalizeToTechnical(ID));
 		is.setItemMeta(im);
 		return is;
 	}

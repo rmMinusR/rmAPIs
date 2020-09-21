@@ -141,12 +141,12 @@ public class ParticleGraphics {
 	public static void drawDebugCross(World w, Vector3 pos, float size) {
 		AdvancedParticleTemplate template = new AdvancedParticleTemplate(Particle.REDSTONE);
 		
-		Vector3 dx = Vector3.right().Mul(size);
-		Vector3 dy = Vector3.up().Mul(size);
-		Vector3 dz = Vector3.forward().Mul(size);
+		Vector3 dx = Vector3.right()   * size;
+		Vector3 dy = Vector3.up()      * size;
+		Vector3 dz = Vector3.forward() * size;
 		
-		drawLine(w, pos.Add(dx).ToBukkit(), pos.Sub(dx).ToBukkit(), template.setColor(255,   0,   0), 0.2f);
-		drawLine(w, pos.Add(dy).ToBukkit(), pos.Sub(dy).ToBukkit(), template.setColor(  0, 255,   0), 0.2f);
-		drawLine(w, pos.Add(dz).ToBukkit(), pos.Sub(dz).ToBukkit(), template.setColor(  0, 127, 255), 0.2f);
+		drawLine(w, (pos+dx).ToBukkit(), (pos-dx).ToBukkit(), template.setColor(255,   0,   0), 0.2f);
+		drawLine(w, (pos+dy).ToBukkit(), (pos-dy).ToBukkit(), template.setColor(  0, 255,   0), 0.2f);
+		drawLine(w, (pos+dz).ToBukkit(), (pos-dz).ToBukkit(), template.setColor(  0, 127, 255), 0.2f);
 	}
 }

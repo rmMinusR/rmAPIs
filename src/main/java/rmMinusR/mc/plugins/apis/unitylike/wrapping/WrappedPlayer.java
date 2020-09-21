@@ -11,11 +11,7 @@ import de.tr7zw.nbtapi.NBTListCompound;
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
 import rmMinusR.mc.plugins.apis.forgelike.CustomItemManager;
 import rmMinusR.mc.plugins.apis.unitylike.Debug;
-import rmMinusR.mc.plugins.apis.unitylike.core.Component;
-import rmMinusR.mc.plugins.apis.unitylike.core.IPersistentSerializable;
-import rmMinusR.mc.plugins.apis.unitylike.core.JavaBehaviour;
-import rmMinusR.mc.plugins.apis.unitylike.core.SerializationFactory;
-import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
+import rmMinusR.mc.plugins.apis.unitylike.core.*;
 
 public class WrappedPlayer extends WrappedLivingEntity {
 	
@@ -35,7 +31,7 @@ public class WrappedPlayer extends WrappedLivingEntity {
 		if(p != null) return p;
 		
 		//None exists, instantiate
-		else return UnitylikeEnvironment.GetInstance().Instantiate(new WrappedPlayer(ent));
+		else return Scene.GetOrNew(ent.getWorld()).Instantiate(new WrappedPlayer(ent));
 	}
 	
 	public static WrappedPlayer Get(Player ent) {

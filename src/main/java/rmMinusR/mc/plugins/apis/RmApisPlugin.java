@@ -33,8 +33,6 @@ import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedPlayer;
 
 public class RmApisPlugin extends JavaPlugin {
 	
-	public static final String KEY_ENTITY_LOAD_RADIUS = "unitylike.entityLoadRadius";
-	
 	public Logger logger;
 	public IllusionManager illusionManager;
 	
@@ -45,12 +43,7 @@ public class RmApisPlugin extends JavaPlugin {
 		INSTANCE = this;
 
 		try {
-			FileConfiguration config = getConfig();
-
-			config.addDefault(KEY_ENTITY_LOAD_RADIUS, 16);
-			
-			saveConfig();
-			reloadConfig();
+			Config.Load();
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {
@@ -82,7 +75,7 @@ public class RmApisPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try {
-			saveConfig();
+			Config.Save();
 		} catch(Throwable t) { t.printStackTrace(); }
 		
 		try {

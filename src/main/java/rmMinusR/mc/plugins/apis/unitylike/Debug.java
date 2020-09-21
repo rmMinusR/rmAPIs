@@ -3,6 +3,7 @@ package rmMinusR.mc.plugins.apis.unitylike;
 import java.util.logging.Level;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.unitylike.core.Time;
 
 public final class Debug {
 	
@@ -34,7 +35,7 @@ public final class Debug {
 				return classpath[classpath.length-1]+"."+t.getMethodName();
 			}
 		}
-		return "ERROR - UNTRACEABLE";
+		return "UNTRACEABLE";
 	}
 	
 	public static String MakeNullSafe(Object o) {

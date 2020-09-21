@@ -74,7 +74,31 @@ public final class Transform extends Component implements Cloneable {
 	public Transform clone() {
 		return new Transform(matrix.clone());
 	}
-	
+
+	public Vector3 Right() {
+		return new Vector3(
+				matrix.m[0][0],
+				matrix.m[0][1],
+				matrix.m[0][2]
+		);
+	}
+
+	public Vector3 Up() {
+		return new Vector3(
+				matrix.m[1][0],
+				matrix.m[1][1],
+				matrix.m[1][2]
+		);
+	}
+
+	public Vector3 Forward() {
+		return new Vector3(
+				matrix.m[2][0],
+				matrix.m[2][1],
+				matrix.m[2][2]
+		);
+	}
+
 	public Vector3 GetPosition() { return new Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]); }
 	public void SetPosition(Vector3 pos) { matrix.m[3][0] = pos.x; matrix.m[3][1] = pos.y; matrix.m[3][2] = pos.z; }
 	

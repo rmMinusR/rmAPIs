@@ -12,7 +12,7 @@ public final class DebugItemNamespace {
 		
 	}
 	
-	public static String Localize(String itemID) {
+	public static String LocalizeToTechnical(String itemID) {
 		String out = itemID;
 		if(!out.startsWith(namespacePrefix)) out = namespacePrefix+out;
 		return "item."+out.replaceAll(":", ".").toLowerCase();

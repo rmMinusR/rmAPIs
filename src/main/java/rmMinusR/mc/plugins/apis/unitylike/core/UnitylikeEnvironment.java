@@ -17,6 +17,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 import rmMinusR.mc.plugins.apis.RmApisPlugin;
+import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedPlayer;
 
 public final class UnitylikeEnvironment implements Runnable, Listener, IGameObjectHolder {
@@ -94,18 +95,24 @@ public final class UnitylikeEnvironment implements Runnable, Listener, IGameObje
 	
 	@Override
 	public void run() {
-		Time.Update();
+		Time.OnFrameStart();
+
+		for(GameObject o : globalGameObjects) o._Update();
 		for(Scene s : loadedScenes) s.Update();
+
+		for(GameObject o : globalGameObjects) o._PhysicsUpdate();
 		for(Scene s : loadedScenes) s.PhysicsUpdate();
+
 		for(Scene s : loadedScenes) s.Render();
+
+		Time.OnFrameEnd();
 	}
 	
 	//GameObject management
 	
 	@Override
 	public Collection<GameObject> GetGameObjects() {
-		Set<GameObject> out = new HashSet<GameObject>();
-		out.addAll(globalGameObjects);
+		Set<GameObject> out = new HashSet<GameObject>(globalGameObjects);
 		for(Scene s : loadedScenes) out.addAll(s.GetGameObjects());
 		return out;
 	}

@@ -1,5 +1,7 @@
 package rmMinusR.mc.plugins.apis.unitylike.data;
 
+import java.util.Arrays;
+
 public final class Mathf {
 	
 	public static final float PI = 3.14159265358462643380f;
@@ -49,19 +51,25 @@ public final class Mathf {
 
 	public static float Cos(float x) { return (float) Math.cos(x); }
 	public static float Sin(float x) { return (float) Math.sin(x); }
-	
+
+	@SafeVarargs
+	public static <T extends Number> T Min(T... ns) { return Min(Arrays.asList(ns)); }
+
 	public static <T extends Number> T Min(Iterable<T> ns) {
 		T least = null;
 		
-		for(T n : ns) if(least == null || ( n.doubleValue() < least.doubleValue() && n != null )) least = n;
+		for(T n : ns) if(least == null || ( n != null && n.doubleValue() < least.doubleValue() )) least = n;
 		
 		return least;
 	}
-	
+
+	@SafeVarargs
+	public static <T extends Number> T Max(T... ns) { return Max(Arrays.asList(ns)); }
+
 	public static <T extends Number> T Max(Iterable<T> ns) {
 		T most = null;
 		
-		for(T n : ns) if(most == null || ( n.doubleValue() < most.doubleValue() && n != null )) most = n;
+		for(T n : ns) if(most == null || ( n != null && n.doubleValue() < most.doubleValue() )) most = n;
 		
 		return most;
 	}
