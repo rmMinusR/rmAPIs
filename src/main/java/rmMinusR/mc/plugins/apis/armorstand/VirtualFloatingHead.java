@@ -8,18 +8,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Pose;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import rmMinusR.mc.plugins.apis.Config;
 import rmMinusR.mc.plugins.apis.unitylike.Debug;
 import rmMinusR.mc.plugins.apis.unitylike.core.IRenderable;
 import rmMinusR.mc.plugins.apis.unitylike.core.RenderDelegate;
 import rmMinusR.mc.plugins.apis.unitylike.data.Mathf;
-import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
+import rmMinusR.mc.plugins.apis.unitylike.data.MatrixTransform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 
-import java.sql.Wrapper;
 import java.util.*;
 
 public final class VirtualFloatingHead extends RenderDelegate implements AutoCloseable {
@@ -34,7 +31,7 @@ public final class VirtualFloatingHead extends RenderDelegate implements AutoClo
     private final WrapperPlayServerEntityTeleport packetMoveLong;
     private final WrapperPlayServerEntityMetadata packetPose;
 
-    private final Transform tgt_transform;
+    private final MatrixTransform tgt_transform;
     private final int internal_id;
 
     private final Set<Player> renderTargets;
@@ -44,7 +41,7 @@ public final class VirtualFloatingHead extends RenderDelegate implements AutoClo
     public ItemStack GetItem() { return headItem.clone(); }
     public void SetItem(ItemStack i) { headDirty = true; headItem = i!=null ? i : new ItemStack(Material.AIR, 1); }
 
-    public VirtualFloatingHead(IRenderable owner, Transform tgt_transform) {
+    public VirtualFloatingHead(IRenderable owner, MatrixTransform tgt_transform) {
         super(owner);
 
         this.tgt_transform = tgt_transform;

@@ -95,7 +95,8 @@ public final class Vector3 implements Cloneable {
 	}
 	
 	//Pythagorean
-	public float GetMagnitude() { return (float) Math.sqrt(x*x + y*y + z*z); }
+	public float GetMagnitude() { return Mathf.Sqrt(GetMagnitudeSq()); }
+	public float GetMagnitudeSq() { return (x*x + y*y + z*z); }
 	public Vector3 WithMagnitude(float m) { return this.Mul(m/GetMagnitude()); }
 	public Vector3 WithBoundedMagnitude(float min, float max) { return GetMagnitude() < min ? WithMagnitude(min) : (GetMagnitude() > max ? WithMagnitude(max) : clone()); }
 	public Vector3 Normalize() { return this.WithMagnitude(1); }

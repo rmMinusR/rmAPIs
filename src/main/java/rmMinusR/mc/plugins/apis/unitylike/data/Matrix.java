@@ -19,7 +19,7 @@ public final class Matrix implements Cloneable {
 	 * R R S T
 	 * . . . .
 	 */
-	protected float[][] m;
+	public float[][] m;
 	
 	public final int size;
 
@@ -165,7 +165,15 @@ public final class Matrix implements Cloneable {
 	public Line TransformRay(Line ray) {
 		return new Line(TransformPoint(ray.origin), TransformVector(ray.direction));
 	}
-	
+
+	//Make Manifold happy
+	public Matrix plus(Matrix other) { return Add(other); }
+	public Matrix minus(Matrix other) { return Sub(other); }
+	public Matrix times(float other) { return Mul(other); }
+	public Matrix times(Matrix other) { return Mul(other); }
+	public Matrix div(float other) { return Mul(1/other); }
+	public Matrix unaryMinus() { return Mul(-1); }
+
 	//Matrix maths: Basic
 	public Matrix Add(Matrix other) { return Add(this, other); }
 	public static Matrix Add(Matrix a, Matrix b) {

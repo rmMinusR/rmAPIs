@@ -29,7 +29,7 @@ public class RodOfRaycasting extends CustomItem {
 	public boolean OnRightClick(LivingEntity holder) {
 		WrappedLivingEntity wrappedHolder = WrappedLivingEntity.GetOrNew(holder);
 		Vector3 pos = new Vector3(holder.getEyeLocation());
-		Vector3 look_vec = wrappedHolder.GetTransform().forward();
+		Vector3 look_vec = wrappedHolder.GetTransform().Forward();
 		
 		float dist = 25;
 		
@@ -57,7 +57,7 @@ public class RodOfRaycasting extends CustomItem {
 	public boolean OnLeftClick(LivingEntity holder) {
 		WrappedLivingEntity wrappedHolder = WrappedLivingEntity.GetOrNew(holder);
 		Vector3 pos = new Vector3(holder.getEyeLocation());
-		Vector3 look_vec = wrappedHolder.GetTransform().forward();
+		Vector3 look_vec = wrappedHolder.GetTransform().Forward();
 		
 		RaycastHit[] allHits = Physics.RaycastAll(holder.getWorld(), pos, look_vec, 25, x -> x.gameObject != wrappedHolder);
 		RaycastHit hit = allHits.length > 0 ? allHits[0] : null;

@@ -6,6 +6,7 @@ import org.bukkit.entity.LivingEntity;
 import rmMinusR.mc.plugins.apis.unitylike.core.Component;
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.core.UnitylikeEnvironment;
+import rmMinusR.mc.plugins.apis.unitylike.data.MatrixTransform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 
 public class WrappedEntity extends GameObject {
@@ -15,19 +16,18 @@ public class WrappedEntity extends GameObject {
 	public WrappedEntity(Entity entity) {
 		super(entity.getWorld());
 		this.entity = entity;
-		
+
+		AddComponent(new VanillaEntityTransform(entity));
 		AddComponent(new EntityCollider(this));
 	}
-	
+
 	@Override
-	public Transform GetTransform() { return new Transform(entity.getLocation()); } //TODO replace with EntityTransform
-	@Override
-	public void SetTransform(Transform t) { t.WriteTo(entity.getLocation()); }
+	public void SetTransform(Transform t) { GetTransform().CopyDataFrom(t); }
 	
 	@Override
 	public <T extends Component> T AddComponent(T c) {
 		//Only allow non-Transform components
-		if(Transform.class.isAssignableFrom(c.getClass())) throw new IllegalArgumentException("Cannot add a Transform to WrappedEntity");
+		if(MatrixTransform.class.isAssignableFrom(c.getClass())) throw new IllegalArgumentException("Cannot add a Transform to WrappedEntity");
 		return super.AddComponent(c);
 	}
 	

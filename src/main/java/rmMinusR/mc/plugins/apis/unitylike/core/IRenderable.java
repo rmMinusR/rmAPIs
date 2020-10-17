@@ -4,6 +4,6 @@ import java.util.Collection;
 
 public interface IRenderable {
 	
-	public Collection<RenderDelegate> Render();
+	public Collection<RenderDelegate> PreRender();
 	
 }

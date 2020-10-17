@@ -145,7 +145,7 @@ public final class Quaternion implements Cloneable {
 		Matrix lookYaw   = Matrix.RotateY(yaw  );
 		Matrix lookPitch = Matrix.RotateX(pitch);
 		
-		return new Transform(Matrix.Mul(lookYaw, lookPitch)).GetRotation();
+		return new MatrixTransform(Matrix.Mul(lookYaw, lookPitch)).GetRotation();
 	}
 	
 }

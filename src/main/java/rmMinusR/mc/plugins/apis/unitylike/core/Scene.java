@@ -187,7 +187,7 @@ public class Scene implements Listener, IGameObjectHolder {
 
 	public void Render() {
 		Set<RenderDelegate> delegates = new HashSet<RenderDelegate>();
-		for(IRenderable i : FindObjectsOfType(IRenderable.class)) delegates.addAll(i.Render());
+		for(IRenderable i : FindObjectsOfType(IRenderable.class)) delegates.addAll(i.PreRender());
 		
 		Map<Integer,Set<RenderDelegate>> sorted = new HashMap<Integer, Set<RenderDelegate>>();
 		for(RenderDelegate i : delegates) {

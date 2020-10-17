@@ -3,11 +3,7 @@ package rmMinusR.mc.plugins.apis.unitylike.physics;
 import java.util.function.Function;
 
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
-import rmMinusR.mc.plugins.apis.unitylike.data.Mathf;
-import rmMinusR.mc.plugins.apis.unitylike.data.Matrix;
-import rmMinusR.mc.plugins.apis.unitylike.data.Quaternion;
-import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
-import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
+import rmMinusR.mc.plugins.apis.unitylike.data.*;
 
 public class BoxCollider extends CompoundCollider {
 	
@@ -17,7 +13,7 @@ public class BoxCollider extends CompoundCollider {
 	public static final Function<GameObject,Matrix> getLTW_Default = new Function<GameObject, Matrix>() {
 		@Override
 		public Matrix apply(GameObject go) {
-			return go.GetTransform().GetLocalToWorldMatrix();
+			return go.GetTransform().LocalToWorld();
 		}
 	};
 	
@@ -26,8 +22,8 @@ public class BoxCollider extends CompoundCollider {
 		@Override
 		public Matrix apply(GameObject go) {
 			Transform t = go.GetTransform().clone();
-			t.ResetRotation();
-			return t.GetLocalToWorldMatrix();
+			t.SetRotation(Quaternion.Look(Vector3.forward()));
+			return t.LocalToWorld();
 		}
 	};
 	
@@ -36,8 +32,8 @@ public class BoxCollider extends CompoundCollider {
 		public Matrix apply(GameObject go) {
 			Vector3 goEulerAngles = go.GetTransform().GetRotation().ToEulerAngles();
 			Vector3 yawOnlyAngles = new Vector3(0, goEulerAngles.y, 0);
-			Transform t = new Transform(go.GetTransform().GetPosition(), Quaternion.FromEulerAngles(yawOnlyAngles));
-			return t.GetLocalToWorldMatrix();
+			MatrixTransform t = new MatrixTransform(go.GetTransform().GetPosition(), Quaternion.FromEulerAngles(yawOnlyAngles));
+			return t.LocalToWorld();
 		}
 	};
 	

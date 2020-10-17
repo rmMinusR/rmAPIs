@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import org.bukkit.World;
 
 import rmMinusR.mc.plugins.apis.unitylike.Debug;
+import rmMinusR.mc.plugins.apis.unitylike.data.MatrixTransform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 import rmMinusR.mc.plugins.apis.unitylike.physics.AbstractCollider;
 
@@ -22,7 +23,7 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 	
 	public GameObject(Scene scene) {
 		components = new HashSet<Component>();
-		try { AddComponent(new Transform()); } catch(IllegalArgumentException ignored) {}
+		try { AddComponent(new MatrixTransform()); } catch(IllegalArgumentException ignored) {}
 		this.scene = scene;
 	}
 	
@@ -30,12 +31,12 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 	
 	@SuppressWarnings("deprecation")
 	public void SetTransform(Transform t) {
-		GetTransform().matrix.CopyDataFrom(t.matrix);
+		GetTransform().CopyDataFrom(t);
 	}
 	
 	public Transform GetTransform() {
-		Transform out = GetComponent(Transform.class);
-		return out != null ? out : new Transform();
+		MatrixTransform out = GetComponent(MatrixTransform.class);
+		return out != null ? out : new MatrixTransform();
 	}
 
 	public AbstractCollider GetCollider() {

@@ -10,7 +10,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -33,6 +32,7 @@ import rmMinusR.mc.plugins.apis.unitylike.core.RenderDelegate;
 import rmMinusR.mc.plugins.apis.unitylike.core.Scene;
 import rmMinusR.mc.plugins.apis.unitylike.core.Time;
 import rmMinusR.mc.plugins.apis.unitylike.data.Random;
+import rmMinusR.mc.plugins.apis.unitylike.data.MatrixTransform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 import rmMinusR.mc.plugins.apis.unitylike.wrapping.WrappedLivingEntity;
@@ -84,7 +84,7 @@ public class WispWand extends CustomItem {
 	@Override
 	public boolean OnRightClick(LivingEntity holder) {
 		Transform tf_holder = WrappedLivingEntity.GetOrNew(holder).GetTransform();
-		Vector3 spawnloc = tf_holder.GetPosition() + tf_holder.forward()*4; //FIXME doesn't actually work
+		Vector3 spawnloc = tf_holder.GetPosition() + tf_holder.Forward()*4; //FIXME doesn't actually work
 		Scene s = Scene.GetOrNew(holder.getWorld());
 		s.Instantiate(new Wisp(holder.getWorld(), spawnloc));
 		
@@ -116,7 +116,7 @@ public class WispWand extends CustomItem {
 		public Wisp(World world, Vector3 pos) {
 			super(world);
 			velocity = Vector3.zero();
-			GetComponent(Transform.class).SetPosition(pos);
+			GetComponent(MatrixTransform.class).SetPosition(pos);
 		}
 		
 		private double t_nextJump;
@@ -124,7 +124,7 @@ public class WispWand extends CustomItem {
 			if(Time.Until(t_nextJump) <= 0) {
 				t_nextJump = Time.time + Random.Range(5d, 10d);
 				
-				GetComponent(Transform.class).SetPosition( GetComponent(Transform.class).GetPosition().Add(Random.InsideUnitSphere().Mul(3)) );
+				GetComponent(MatrixTransform.class).SetPosition( GetComponent(MatrixTransform.class).GetPosition().Add(Random.InsideUnitSphere().Mul(3)) );
 			}
 			
 			super.Update();
@@ -140,9 +140,9 @@ public class WispWand extends CustomItem {
 
 		private VirtualFloatingHead _renderer;
 		@Override
-		public Collection<RenderDelegate> Render() {
+		public Collection<RenderDelegate> PreRender() {
 			if(_renderer == null) {
-				_renderer = new VirtualFloatingHead(this, GetComponent(Transform.class));
+				_renderer = new VirtualFloatingHead(this, GetComponent(MatrixTransform.class));
 				_renderer.SetItem(new ItemStack(Material.DIAMOND_HELMET, 1));
 			}
 

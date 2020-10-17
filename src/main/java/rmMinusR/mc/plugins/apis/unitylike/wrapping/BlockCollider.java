@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 
 import rmMinusR.mc.plugins.apis.unitylike.core.GameObject;
 import rmMinusR.mc.plugins.apis.unitylike.data.BlockVector3;
+import rmMinusR.mc.plugins.apis.unitylike.data.MatrixTransform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 import rmMinusR.mc.plugins.apis.unitylike.physics.BoxCollider;
@@ -33,7 +34,7 @@ public final class BlockCollider extends BoxCollider {
 		
 		@Override
 		public Transform GetTransform() {
-			return new Transform(pos.GetCenterOfBlock());
+			return new MatrixTransform(pos.GetCenterOfBlock());
 		}
 		
 	}
