@@ -49,11 +49,16 @@ public final class Quaternion implements Cloneable {
 	protected Quaternion clone() {
 		return new Quaternion(w, x, y, z);
 	}
-	
+
+	//Make Manifold happy
+	public Quaternion times(Quaternion other) { return Mul(other); }
+	public Quaternion div(Quaternion other) { return this*-other; }
+	public Quaternion unaryMinus() { return Inverse(); }
+
 	public Quaternion Inverse() {
 		return new Quaternion(w, -x, -y, -z);
 	}
-	
+
 	public Quaternion Mul(Quaternion other) { return Mul(this, other); }
 	public static Quaternion Mul(Quaternion a, Quaternion... etc) {
 		if(etc.length == 0) {

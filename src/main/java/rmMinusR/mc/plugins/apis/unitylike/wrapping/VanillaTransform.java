@@ -9,16 +9,16 @@ import rmMinusR.mc.plugins.apis.unitylike.data.Quaternion;
 import rmMinusR.mc.plugins.apis.unitylike.data.Transform;
 import rmMinusR.mc.plugins.apis.unitylike.data.Vector3;
 
-public class VanillaEntityTransform extends Component implements Transform {
+public class VanillaTransform extends Component implements Transform {
 
     private Entity backingEntity;
 
-    public VanillaEntityTransform(Entity vanilla) {
+    public VanillaTransform(Entity vanilla) {
         super(null);
         backingEntity = vanilla;
     }
 
-    public VanillaEntityTransform(WrappedEntity gameObject) {
+    public VanillaTransform(WrappedEntity gameObject) {
         super(gameObject);
         backingEntity = gameObject.entity;
     }
@@ -96,7 +96,7 @@ public class VanillaEntityTransform extends Component implements Transform {
     }
 
     @Override
-    public VanillaEntityTransform clone() {
-        return new VanillaEntityTransform(backingEntity);
+    public VanillaTransform clone() {
+        return new VanillaTransform(backingEntity);
     }
 }

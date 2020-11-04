@@ -5,8 +5,10 @@ import java.util.Arrays;
 public final class Mathf {
 	
 	public static final float PI = 3.14159265358462643380f;
+    public static final float DEG2RAD = PI/180;
+	public static final float RAD2DEG = 180/PI;
 
-	private Mathf() {}
+    private Mathf() {}
 	
 	public static float Abs(double f) { return (float)(f > 0 ? f : -f); }
 

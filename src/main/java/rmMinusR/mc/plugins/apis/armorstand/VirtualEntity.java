@@ -22,7 +22,6 @@ import java.util.UUID;
 public abstract class VirtualEntity<TEntity extends Entity> extends RenderDelegate implements AutoCloseable {
 
     public Vector3 backingPosition;
-    public Quaternion backingRotation;
 
     protected final Set<Player> viewers;
 
@@ -33,6 +32,8 @@ public abstract class VirtualEntity<TEntity extends Entity> extends RenderDelega
 
     protected final WrapperPlayServerEntityMetadata packetMetadata;
     protected final WrappedDataWatcher watcherMetadata;
+    protected final void UpdateMetadata() { packetMetadata.setMetadata(watcherMetadata.getWatchableObjects()); }
+
     protected final WrapperPlayServerEntityEquipment packetEquip;
 
     private final WrapperPlayServerRelEntityMove packetMoveShort;
@@ -43,7 +44,6 @@ public abstract class VirtualEntity<TEntity extends Entity> extends RenderDelega
         //Initialize backing values
         super(owner);
         backingPosition = Vector3.zero();
-        backingRotation = Quaternion.identity();
         viewers = new HashSet<Player>();
 
         // NEW / DELETE

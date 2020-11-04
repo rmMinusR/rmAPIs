@@ -9,8 +9,13 @@ public abstract class RenderDelegate implements Comparable<RenderDelegate> {
 	public RenderDelegate(IRenderable owner) {
 		this.owner = owner;
 	}
-	
-	public abstract int GetPriority();
+
+	public final int _GetPriority() {
+		try {
+			return GetPriority();
+		} catch(Throwable t) { Debug.Log("Error calling GetPriority() on "+this); t.printStackTrace(); return 0; }
+	}
+	protected abstract int GetPriority();
 	
 	public final void _Render() {
 		try {

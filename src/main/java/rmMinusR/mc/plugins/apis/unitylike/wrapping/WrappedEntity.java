@@ -17,7 +17,7 @@ public class WrappedEntity extends GameObject {
 		super(entity.getWorld());
 		this.entity = entity;
 
-		AddComponent(new VanillaEntityTransform(entity));
+		AddComponent(new VanillaTransform(entity));
 		AddComponent(new EntityCollider(this));
 	}
 

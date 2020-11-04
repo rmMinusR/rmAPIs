@@ -187,12 +187,12 @@ public class Scene implements Listener, IGameObjectHolder {
 
 	public void Render() {
 		Set<RenderDelegate> delegates = new HashSet<RenderDelegate>();
-		for(IRenderable i : FindObjectsOfType(IRenderable.class)) delegates.addAll(i.PreRender());
-		
+		for(IRenderable i : FindObjectsOfType(IRenderable.class)) delegates.addAll(i._PreRender());
+
 		Map<Integer,Set<RenderDelegate>> sorted = new HashMap<Integer, Set<RenderDelegate>>();
 		for(RenderDelegate i : delegates) {
 			try {
-				int prio = i.GetPriority();
+				int prio = i._GetPriority();
 				if(!sorted.containsKey(prio)) sorted.put(prio, new HashSet<RenderDelegate>());
 				sorted.get(prio).add(i);
 			} catch(Throwable t) { Debug.Log("Error calling GetPriority() on "+i); t.printStackTrace(); }
