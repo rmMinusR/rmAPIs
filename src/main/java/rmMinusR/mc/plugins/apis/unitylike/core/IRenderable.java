@@ -5,5 +5,7 @@ import java.util.Collection;
 public interface IRenderable {
 	
 	public Collection<RenderDelegate> PreRender();
-	
+
+	public Scene GetContext();
+
 }

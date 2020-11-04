@@ -109,7 +109,7 @@ public class WispWand extends CustomItem {
 		return is;
 	}
 	
-	public static final class Wisp extends GameObject implements IRenderable, IPersistentSerializable {
+	public static final class Wisp extends GameObject implements IRenderable /*IPersistentSerializable*/ {
 		
 		public Vector3 velocity;
 
@@ -142,39 +142,20 @@ public class WispWand extends CustomItem {
 		@Override
 		public Collection<RenderDelegate> PreRender() {
 			if(_renderer == null) {
-				_renderer = new VirtualFloatingHead(this, GetComponent(MatrixTransform.class));
+				_renderer = new VirtualFloatingHead(this);
 				_renderer.SetItem(new ItemStack(Material.DIAMOND_HELMET, 1));
 			}
 
 			Set<RenderDelegate> out = new HashSet<RenderDelegate>(1);
+			_renderer.backingPosition = GetComponent(Transform.class).GetPosition();
 			out.add(_renderer);
 			return out;
 		}
-		
-		public static final class WispRenderer extends RenderDelegate {
 
-			public WispRenderer(Wisp owner) {
-				super(owner);
-			}
-
-			@Override
-			public int GetPriority() {
-				return 0;
-			}
-
-			@Override
-			protected void Render() {
-				Wisp w = (Wisp)owner;
-				ParticleGraphics.surfCube(
-						w.scene.ref,
-						(w.GetTransform().GetPosition() + Vector3.one() * -0.2f).ToBukkit(),
-						(w.GetTransform().GetPosition() + Vector3.one() *  0.2f).ToBukkit(),
-						new AdvancedParticleTemplate(Particle.REDSTONE).setColor(255, 127, 0),
-						0.07f);
-			}
-			
+		@Override
+		public Scene GetContext() {
+			return scene;
 		}
-		
 	}
 	
 }

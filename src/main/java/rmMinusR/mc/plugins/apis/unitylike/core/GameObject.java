@@ -44,7 +44,26 @@ public class GameObject extends UnitylikeObject implements IComponentHolder {
 	}
 	
 	//Components management
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T GetComponent(Class<T> clazz) {
+		for(Component c : components) if(clazz.isAssignableFrom(c.getClass())) return (T)c;
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> Collection<T> GetComponents(Class<T> clazz) {
+		Collection<T> out = new HashSet<T>();
+
+		for(Component o : components) {
+			if(clazz.isAssignableFrom(o.getClass())) out.add((T)o);
+		}
+
+		return out;
+	}
+
 	@Override
 	public Collection<Component> GetComponents() {
 		return new HashSet<Component>(components);

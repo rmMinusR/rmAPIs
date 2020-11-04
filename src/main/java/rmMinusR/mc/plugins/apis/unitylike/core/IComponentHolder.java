@@ -8,8 +8,7 @@ public interface IComponentHolder {
 	@SuppressWarnings("unchecked")
 	public default <T> Collection<T> GetComponents(Class<T> clazz) {
 		Collection<T> out = new HashSet<T>();
-		
-		if(clazz.isAssignableFrom(this.getClass())) out.add((T)this);
+
 		for(Component o : GetComponents()) {
 			if(clazz.isAssignableFrom(o.getClass())) out.add((T)o);
 		}
@@ -19,7 +18,6 @@ public interface IComponentHolder {
 	
 	@SuppressWarnings("unchecked")
 	public default <T> T GetComponent(Class<T> clazz) {
-		if(clazz.isAssignableFrom(this.getClass())) return (T)this;
 		for(Component o : GetComponents()) {
 			if(clazz.isAssignableFrom(o.getClass())) return (T)o;
 		}

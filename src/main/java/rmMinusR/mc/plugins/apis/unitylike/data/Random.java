@@ -34,5 +34,6 @@ public final class Random {
 	public static float  Range(float  min, float  max) { if(min > max) throw new IllegalArgumentException(); return GetRNG().nextFloat() * (max-min) + min; }
 	public static int    Range(int    min, int    max) { if(min > max) throw new IllegalArgumentException(); return min + GetRNG().nextInt() % (max-min+1); }
 	public static long   Range(long   min, long   max) { if(min > max) throw new IllegalArgumentException(); return min + GetRNG().nextLong() % (max-min+1); }
-	
+
+    public static int EntityID() { return _rng.nextInt(); }
 }

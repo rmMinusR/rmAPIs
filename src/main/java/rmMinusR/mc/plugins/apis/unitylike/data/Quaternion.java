@@ -14,8 +14,10 @@ public final class Quaternion implements Cloneable {
 	public Quaternion(double w, double x, double y, double z) {
 		this((float) w, (float) x, (float) y, (float) z);
 	}
-	
-	public Vector3 forward() {
+
+    public static Quaternion identity() { return new Quaternion(1, 0, 0, 0); }
+
+    public Vector3 forward() {
 		//https://www.gamedev.net/forums/topic/56471-extracting-direction-vectors-from-quaternion/1273785
 		return new Vector3(
 					2 * (x*z + w*y),
